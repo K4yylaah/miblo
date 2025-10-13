@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
 app = FastAPI()
-
-def main():
-    print("Hello, world!")
+@app.get("/")
+def read_root():
+        return {"message": "Bienvenue sur FastAPI!"}
