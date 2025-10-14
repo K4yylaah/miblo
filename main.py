@@ -17,39 +17,33 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(lifespan=lifespan)
-
-
-@app.get("/")
-def read_root():
-    return {"test"}
-
-
-@app.post("/create/bank/account")
-def accountBank_root(request: BankAccount):
-    return create_bank_account(request.id, request.user_id, request.solde, request.rib)
-
-
-@app.get("/bank/account/{user_id}")
-def bank_account_root(user_id: int):
-    return get_bank_account(user_id)
-
-
 class DepositRequest(BaseModel):
     compteId: int
     amout: float
-
-
-@app.post("/depositMoney")
-def make_deposit(request: DepositRequest):
-    return depositMoney(request.compteId, request.amout)
 
 class CreateUserBody(BaseModel):
     name: str
     email: str
     password: str
+app = FastAPI(lifespan=lifespan)
 
-@app.post("/register/")
+@app.get("/")
+def read_root():
+    return {"test"}
+
+@app.post("/create/bank/account")
+def accountBank_root(request: BankAccount):
+    return create_bank_account(request.id, request.user_id, request.solde, request.rib, request.is_primary)
+
+@app.get("/bank/account/{user_id}")
+def bank_account_root(user_id: int):
+    return get_bank_account(user_id)
+
+@app.post("/depositMoney")
+def make_deposit(request: DepositRequest):
+    return depositMoney(request.compteId, request.amout)
+
+@app.post("/register")
 def create_account(user: CreateUserBody):
     return create_user_account (user.name, user.password, user.email)
 
