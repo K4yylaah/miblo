@@ -6,6 +6,10 @@ from pydantic import BaseModel
 from Controllers.BanckAccountController import create_bank_account
 from database import create_db_and_tables
 from Controllers.depositMoneyControlleur import depositMoney
+from models.model import BankAccount, Transactions
+from Controllers.cancelTransactionController import cancel_transaction
+from database import engine
+from sqlmodel import Session
 from models.model import BankAccount
 
 
@@ -38,6 +42,54 @@ class DepositRequest(BaseModel):
 @app.post("/depositMoney")
 def make_deposit(request: DepositRequest):
     return depositMoney(request.compteId, request.amout)
+
+class TransactionRequest(BaseModel):
+    id_compteA: int
+    id_compteB: int
+    amout: float
+
+class CreateAccountRequest(BaseModel):
+    user_id: int
+    solde: float
+    rib: str
+
+@app.post("/createBankAccount")
+def create_bank_account(request: CreateAccountRequest):
+    with Session(engine) as session:
+        account = BankAccount(
+            user_id=request.user_id,
+            solde=request.solde,
+            rib=request.rib
+        )
+        session.add(account)
+        session.commit()
+        session.refresh(account)
+        return {"message": "Compte créé avec succès.", "compte": account}
+
+@app.post("/createTransaction")
+def create_transaction(request: TransactionRequest):
+    with Session(engine) as session:
+        transaction = Transactions(
+            id_compteA=request.id_compteA,
+            id_compteB=request.id_compteB,
+            amout=request.amout
+        )
+        session.add(transaction)
+        session.commit()
+        session.refresh(transaction)
+        return {
+            "message": "Transaction créée avec succès.",
+            "transaction": transaction
+        }
+
+class CancelTransactionRequest(BaseModel):
+    id_compteA: int
+    id_compteB: int
+    id_transaction: int
+
+@app.post("/cancelTransaction")
+def cancel_transaction_endpoint(request: CancelTransactionRequest):
+    return cancel_transaction(request.id_compteA, request.id_compteB, request.id_transaction)
 
 
 """"class User(SQLModel, table=True):
