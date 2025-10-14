@@ -1,9 +1,8 @@
 from contextlib import asynccontextmanager
-
-
 from fastapi import FastAPI
 from pydantic import BaseModel
 from Controllers.BanckAccountController import create_bank_account
+from Controllers.BanckAccountController import get_bank_account
 from database import create_db_and_tables
 from Controllers.depositMoneyControlleur import depositMoney
 from models.model import BankAccount
@@ -13,6 +12,7 @@ from models.model import BankAccount
 async def lifespan(app: FastAPI):
     create_db_and_tables()
     yield
+
 
 app = FastAPI(lifespan=lifespan)
 
@@ -27,14 +27,16 @@ def accountBank_root(request: BankAccount):
     return create_bank_account(request.id, request.user_id, request.solde, request.rib)
 
 
-@app.get("/bank/account")
-def bank_account_root(bankAccount: BankAccount):
-    return bankAccount
+@app.get("/bank/account/{user_id}")
+def bank_account_root(user_id: int):
+    return get_bank_account(user_id)
 
 
 class DepositRequest(BaseModel):
     compteId: int
     amout: float
+
+
 @app.post("/depositMoney")
 def make_deposit(request: DepositRequest):
     return depositMoney(request.compteId, request.amout)
