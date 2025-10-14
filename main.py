@@ -2,12 +2,15 @@ from typing import Optional
 
 from contextlib import asynccontextmanager
 
-
-from fastapi import FastAPI
+import jwt
+from fastapi import FastAPI, Depends, HTTPException
 from pydantic import BaseModel
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, select
 
-from database import create_db_and_tables
+from database import create_db_and_tables, get_session
+from models.model import User
+
+from routes.users import router as users_router, LoginData
 
 
 @asynccontextmanager
@@ -21,6 +24,27 @@ app = FastAPI(lifespan=lifespan)
 @app.get("/")
 def read_root():
         return {"message": "Bienvenue sur FastAPI!"}
+
+
+app.include_router(users_router)
+
+class LoginBody (BaseModel):
+    email: str
+    password: str
+
+@app.post("/login")
+def login(body : LoginBody, session = Depends(get_session)):
+    user = session.exec(select(User).where(User.email==body.email)).first()
+    if not user or user.password != body.password:
+        raise HTTPException(status_code=401, detail="Email ou mot de passe incorrect")
+
+    return {"message": f"Bienvenue {user.email} !"}
+
+secret_key = "very_secret_key"
+algorithm = "HS256"
+
+def generate_token(user: User):
+     return jwt.encode(user.dict(), secret_key, algorithm=algorithm)
 
 
 """"class User(SQLModel, table=True):
