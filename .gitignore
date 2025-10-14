@@ -1,2 +1,65 @@
-.venv
-.idea
+--- 👨‍💻 Python ---
+pycache/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg
+*.egg-info/
+*.manifest
+*.spec
+
+Environnements virtuels
+.env
+.venv/
+env/
+venv/
+ENV/
+Pipfile.lock
+
+Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+Cache et logs
+*.log
+*.pot
+*.pyc
+.cache/
+coverage/
+.tox/
+.mypy_cache/
+.pytest_cache/
+snapshots/
+
+--- 🧱 FastAPI / SQLModel ---
+Base de données SQLite
+database.db
+*.sqlite3
+
+--- 💡 PyCharm / JetBrains ---
+.idea/
+.iml
+
+--- 🍎 macOS spécifiques ---
+.DSStore
+.AppleDouble
+.LSOverride
+Icon
+.
+.Spotlight-V100
+.Trashes
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+
+--- 📦 Autres fichiers à ignorer ---
+Fichiers temporaires système
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+Sauvegardes éditeur
+*~
+*.swp
+*.swo
