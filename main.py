@@ -1,13 +1,11 @@
 from typing import Optional
-
 from contextlib import asynccontextmanager
-
-
 from fastapi import FastAPI
 from pydantic import BaseModel
-from sqlmodel import SQLModel, Field
-
+from Controllers.BanckAccountController import create_bank_account
 from database import create_db_and_tables
+from models.model import BankAccount
+import sqlite3
 
 
 @asynccontextmanager
@@ -15,12 +13,29 @@ async def lifespan(app: FastAPI):
     create_db_and_tables()
     yield
 
+
+def get_db_connection():
+    conn = sqlite3.connect("database.db")
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
 app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/")
 def read_root():
-        return {"message": "Bienvenue sur FastAPI!"}
+    return {"test"}
+
+
+@app.post("/create/bank/account")
+def accountBank_root(request: BankAccount):
+    return create_bank_account(request.id, request.user_id, request.solde, request.rib)
+
+
+@app.get("/bank/account")
+def bank_account_root(bankAccount: BankAccount):
+    return bankAccount
 
 
 """"class User(SQLModel, table=True):
@@ -32,9 +47,9 @@ class Transactions(SQLModel, table=True):
     id_compteA: int
     id_compteB: int
 
-"""""
+""" ""
 
-""""compte1 = User(id=1, solde=100)
+""""compte = User(id=1, solde=100)
 compte2 = User(id=2, solde=100)
 
 
@@ -49,4 +64,4 @@ def echange(compteA, compteB, var):
 
 print(echange(compte1, compte2, 50))
 print(compte1.solde)
-print(compte2.solde)"""""
+print(compte2.solde)""" ""
