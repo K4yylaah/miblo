@@ -1,13 +1,11 @@
 from typing import Optional
-
 from contextlib import asynccontextmanager
-
-
 from fastapi import FastAPI
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Field
-
 from database import create_db_and_tables
+from depositMoney import depositMoney
+from models.model import User
 
 
 @asynccontextmanager
@@ -21,6 +19,14 @@ app = FastAPI(lifespan=lifespan)
 @app.get("/")
 def read_root():
         return {"message": "Bienvenue sur FastAPI!"}
+
+
+class DepositRequest(BaseModel):
+    compteId: int
+    amout: float
+@app.post("/depositMoney")
+def make_deposit(request: DepositRequest):
+    return depositMoney(request.compteId, request.amout)
 
 
 """"class User(SQLModel, table=True):
