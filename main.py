@@ -1,4 +1,7 @@
 from contextlib import asynccontextmanager
+from typing import Optional
+from models.model import User
+from UserController import create_user_account
 from fastapi import FastAPI
 from pydantic import BaseModel
 from Controllers.BanckAccountController import create_bank_account
@@ -41,6 +44,14 @@ class DepositRequest(BaseModel):
 def make_deposit(request: DepositRequest):
     return depositMoney(request.compteId, request.amout)
 
+class CreateUserBody(BaseModel):
+    name: str
+    email: str
+    password: str
+
+@app.post("/register/")
+def create_account(user: CreateUserBody):
+    return create_user_account (user.name, user.password, user.email)
 
 """"class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
