@@ -1,27 +1,40 @@
+from typing import Optional
+
+from contextlib import asynccontextmanager
+
+
 from fastapi import FastAPI
 from pydantic import BaseModel
+from sqlmodel import SQLModel, Field
 
 from database import create_db_and_tables
 
-""""app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_db_and_tables()
+    yield
+
+app = FastAPI(lifespan=lifespan)
+
+
 @app.get("/")
 def read_root():
         return {"message": "Bienvenue sur FastAPI!"}
 
-@app.on_event("startup")
-def on_startup():
-    create_db_and_tables()"""
 
-class User(BaseModel):
-    id: int
+""""class User(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
     solde: int
 
-class Transactions(BaseModel):
-    id: int
+class Transactions(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
     id_compteA: int
     id_compteB: int
 
-compte1 = User(id=1, solde=100)
+"""""
+
+""""compte1 = User(id=1, solde=100)
 compte2 = User(id=2, solde=100)
 
 
@@ -36,4 +49,4 @@ def echange(compteA, compteB, var):
 
 print(echange(compte1, compte2, 50))
 print(compte1.solde)
-print(compte2.solde)
+print(compte2.solde)"""""
