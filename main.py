@@ -1,17 +1,12 @@
-from typing import Optional
-
 from contextlib import asynccontextmanager
 
 
 from fastapi import FastAPI
 from pydantic import BaseModel
-from sqlmodel import SQLModel, Field
 from Controllers.BanckAccountController import create_bank_account
 from database import create_db_and_tables
-from depositMoney import depositMoney
-from models.model import User
+from Controllers.depositMoneyControlleur import depositMoney
 from models.model import BankAccount
-import sqlite3
 
 
 @asynccontextmanager
