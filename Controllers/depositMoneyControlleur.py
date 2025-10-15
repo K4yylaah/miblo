@@ -1,0 +1,30 @@
+from sqlmodel import Session, select
+from models.model import BankAccount, Deposits
+from database import engine
+
+
+def depositMoney(compteId, amout):
+    if amout<=0:
+        return {"Erreur: Le depot dois etre strictement supérieur à 0"}
+
+    with Session(engine) as session:
+        compte = session.exec(select(BankAccount).where(BankAccount.id == compteId)).first()
+
+        if not compte:
+            return {"Erreur: Compte introuvable."}
+
+        compte.solde += amout
+        session.add(compte)
+
+        deposit = Deposits(id_compte=compteId, amout=amout)
+        session.add(deposit)
+
+        session.commit()
+        session.refresh(compte)
+        session.refresh(deposit)
+
+        return {
+            "message": f"Dépôt de {amout} € effectué ",
+            "nouveau_solde": compte.solde,
+            "deposit": deposit
+        }
