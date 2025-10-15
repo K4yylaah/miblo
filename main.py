@@ -1,5 +1,8 @@
+#main.py
+
 from contextlib import asynccontextmanager
 from Controllers.UserController import create_user_account
+
 import jwt
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
@@ -22,6 +25,7 @@ from Controllers.TransactionController import (
     show_transaction,
     show_all_transactions,
 )
+from Controllers.TransactionController import cancel_transaction, show_transaction, show_all_transactions, send_money
 from models.model import BankAccount, Transactions, User
 from Controllers.Account_Login_Controller import login
 from sqlmodel import Session
@@ -35,11 +39,9 @@ async def lifespan(app: FastAPI):
     create_db_and_tables()
     yield
 
-
 class DepositRequest(BaseModel):
     compteId: int
     amout: float
-
 
 class CreateUserBody(BaseModel):
     name: str
@@ -50,7 +52,6 @@ class TransactionRequest(BaseModel):
     id_compteA: int
     id_compteB: int
     amout: float
-
 
 class CreateAccountRequest(BaseModel):
     user_id: int
@@ -65,13 +66,17 @@ class CancelTransactionRequest(BaseModel):
 class LoginBody(BaseModel):
     email: str
     password: str
-app = FastAPI(lifespan=lifespan)
 
+class SendMoneyRequest(BaseModel):
+    id_compteA: int
+    id_compteB: int
+    amout: float
+
+app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 def read_root():
     return {"test"}
-
 
 @app.post("/create/bank/account")
 def accountBank_root(request: BankAccount):
@@ -90,8 +95,6 @@ def make_deposit(request: DepositRequest):
 @app.post("/register")
 def create_account(user: CreateUserBody):
     return create_user_account(user.name, user.password, user.email)
-
-
 
 @app.post("/createTransaction")
 def create_transaction(request: TransactionRequest):
@@ -149,3 +152,7 @@ def create_recipient(request: RecipientRequest):
     if not recipient:
         return {"error": "Aucun compte trouvé avec ce RIB"}
     return makeRecipient(request.user_id, recipient)
+
+@app.post("/sendMoney")
+def send_money_endpoint(request: SendMoneyRequest):
+    return send_money(request.id_compteA, request.id_compteB, request.amout)
