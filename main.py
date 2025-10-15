@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from Controllers.BanckAccountController import create_bank_account, get_bank_account
 from Controllers.depositMoneyControlleur import depositMoney
 from Controllers.TransactionController import cancel_transaction, show_transaction, show_all_transactions
+from Controllers.recipientController import findRecipientRib, makeRecipient
 from models.model import BankAccount, Transactions, User
 from Controllers.Account_LoginController import login
 from sqlmodel import Session
@@ -112,3 +113,12 @@ def login_root(request: LoginBody):
     print(request)
     return login(request.email, request.password)
 
+class RecipientRequest(BaseModel):
+    user_id: int
+    rib: str
+@app.post("/createRecipient/{user_id}")
+def create_recipient(request: RecipientRequest):
+    recipient = findRecipientRib(request.rib)
+    if not recipient:
+        return {"error": "Aucun compte trouvé avec ce RIB"}
+    return makeRecipient(request.user_id, recipient)
