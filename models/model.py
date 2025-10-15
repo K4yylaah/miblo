@@ -23,9 +23,15 @@ class BankAccount(SQLModel, table=True):
     solde: float
     rib : str
     is_primary: Optional[bool] = Field(default=False)
+    is_closed: Optional[bool] = Field(default=False)
+
 
 class Deposits(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     id_compte: int
-    amout:float
+    amout: float
 
+class Recipients(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int
+    id_recipient: int
