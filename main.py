@@ -1,6 +1,5 @@
 from contextlib import asynccontextmanager
 from Controllers.UserController import create_user_account
-
 import jwt
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
@@ -17,13 +16,14 @@ from Controllers.TransactionController import cancel_transaction, show_transacti
 from Controllers.Account_Login_Controller import login, get_user
 from Controllers.User_Recovery_Controller import get_user_by_id
 from Controllers.TransactionController import cancel_transaction, show_transaction, show_all_transactions
+from Controllers.recipientController import findRecipientRib, makeRecipient
 from Controllers.TransactionController import (
     cancel_transaction,
     show_transaction,
     show_all_transactions,
 )
 from models.model import BankAccount, Transactions, User
-from Controllers.Account_LoginController import login
+from Controllers.Account_Login_Controller import login
 from sqlmodel import Session
 from database import create_db_and_tables, get_session, engine
 
@@ -140,3 +140,12 @@ def close_account_root(banckAccount_id: int):
 def get_user(user=Depends(get_user)):
     print(user)
     return get_user_by_id(user["id"])
+class RecipientRequest(BaseModel):
+    user_id: int
+    rib: str
+@app.post("/createRecipient/{user_id}")
+def create_recipient(request: RecipientRequest):
+    recipient = findRecipientRib(request.rib)
+    if not recipient:
+        return {"error": "Aucun compte trouvé avec ce RIB"}
+    return makeRecipient(request.user_id, recipient)
