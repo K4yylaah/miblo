@@ -23,7 +23,6 @@ def cancel_transaction(id_compteA, id_compteB, id_transaction):
         session.add(bankaccountA)
         session.add(bankaccountB)
         session.commit()
-
         session.refresh(bankaccountA)
         session.refresh(bankaccountB)
 
@@ -51,3 +50,10 @@ def show_transaction(id_compteA, id_compteB, id_transaction):
             "RIB du compte qui recoit" : compteB.rib,
             "Montant de la transaction" : transaction.amout,
         }
+        
+def show_all_transactions(compte_id):
+    with Session(engine) as session:
+        transactions = session.exec(select(Transactions).where((Transactions == compte_id) | (Transactions == compte_id))).all()
+        if not transactions:
+            return {"Aucune transaction trouvée pour ce compte."}
+        return transactions

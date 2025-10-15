@@ -1,12 +1,11 @@
 from contextlib import asynccontextmanager
 from Controllers.UserController import create_user_account
-
 import jwt
 from fastapi import FastAPI, Depends, HTTPException
 from pydantic import BaseModel
 from Controllers.BanckAccountController import create_bank_account, get_bank_account
 from Controllers.depositMoneyControlleur import depositMoney
-from Controllers.TransactionController import cancel_transaction, show_transaction
+from Controllers.TransactionController import cancel_transaction, show_transaction, show_all_transactions
 from models.model import BankAccount, Transactions, User
 from Controllers.Account_LoginController import login
 from sqlmodel import Session
@@ -101,7 +100,9 @@ def cancel_transaction_endpoint(request: CancelTransactionRequest):
 def show_details_transaction(request: CancelTransactionRequest):
     return show_transaction(request.id_compteA, request.id_compteB, request.id_transaction)
 
-
+@app.get("/showAllTransactions/{compte_id}")
+def show_all_transactions_endpoint(compte_id: int):
+    return show_all_transactions(compte_id)
 
 
 # app.include_router(users_router)
