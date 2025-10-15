@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+""""from pydantic import BaseModel
 from fastapi import APIRouter
 from fastapi import Depends
 from sqlmodel import Session, select
@@ -19,4 +19,4 @@ def login(data: LoginData, session: Session = Depends(get_session)):
     statement = select(User).where(User.email == email)
     result = session.exec(statement)
     user = result.first()
-
+"""""

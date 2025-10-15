@@ -10,7 +10,7 @@ from sqlmodel import SQLModel, Field, select
 from database import create_db_and_tables, get_session
 from models.model import User
 
-from routes.users import router as users_router, LoginData
+# from routes.users import router as users_router, LoginData
 
 
 @asynccontextmanager
@@ -26,7 +26,9 @@ def read_root():
         return {"message": "Bienvenue sur FastAPI!"}
 
 
-app.include_router(users_router)
+
+
+# app.include_router(users_router)
 
 class LoginBody (BaseModel):
     email: str
@@ -40,7 +42,7 @@ def login(body : LoginBody, session = Depends(get_session)):
 
     return {"message": f"Bienvenue {user.email} !"}
 
-secret_key = "very_secret_key"
+secret_key = "1234567890123456789"
 algorithm = "HS256"
 
 def generate_token(user: User):
