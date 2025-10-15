@@ -1,5 +1,5 @@
 from sqlmodel import Session, create_engine, SQLModel
-from models.model import User, Transactions
+from models.model import User
 
 
 sqlite_file_name = "database.db"
