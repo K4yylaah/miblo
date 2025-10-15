@@ -1,30 +1,30 @@
+#main.py
+
 from contextlib import asynccontextmanager
-from Controllers.UserController import create_user_account
 
 import jwt
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+from Controllers.UserController import create_user_account
 from fastapi import FastAPI, Depends, HTTPException
 from pydantic import BaseModel
 from Controllers.BanckAccountController import create_bank_account, get_bank_account
 from Controllers.depositMoneyControlleur import depositMoney
 from Controllers.TransactionController import cancel_transaction, show_transaction
+from Controllers.Account_Login_Controller import login, get_user
+from Controllers.User_Recovery_Controller import get_user_by_id
 from models.model import BankAccount, Transactions, User
-from Controllers.Account_LoginController import login
 from sqlmodel import Session
 from database import create_db_and_tables, get_session, engine
-
-# from routes.users import router as users_router, LoginData
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_db_and_tables()
     yield
 
-
 class DepositRequest(BaseModel):
     compteId: int
     amout: float
-
 
 class CreateUserBody(BaseModel):
     name: str
@@ -35,7 +35,6 @@ class TransactionRequest(BaseModel):
     id_compteA: int
     id_compteB: int
     amout: float
-
 
 class CreateAccountRequest(BaseModel):
     user_id: int
@@ -50,13 +49,12 @@ class CancelTransactionRequest(BaseModel):
 class LoginBody(BaseModel):
     email: str
     password: str
-app = FastAPI(lifespan=lifespan)
 
+app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 def read_root():
     return {"test"}
-
 
 @app.post("/create/bank/account")
 def accountBank_root(request: BankAccount):
@@ -75,8 +73,6 @@ def make_deposit(request: DepositRequest):
 @app.post("/register")
 def create_account(user: CreateUserBody):
     return create_user_account(user.name, user.password, user.email)
-
-
 
 @app.post("/createTransaction")
 def create_transaction(request: TransactionRequest):
@@ -101,13 +97,12 @@ def cancel_transaction_endpoint(request: CancelTransactionRequest):
 def show_details_transaction(request: CancelTransactionRequest):
     return show_transaction(request.id_compteA, request.id_compteB, request.id_transaction)
 
-
-
-
-# app.include_router(users_router)
-
 @app.post("/login")
 def login_root(request: LoginBody):
     print(request)
     return login(request.email, request.password)
 
+@app.get("/me")
+def get_user(user=Depends(get_user)):
+    print(user)
+    return get_user_by_id(user["id"])
