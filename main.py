@@ -1,22 +1,18 @@
 from contextlib import asynccontextmanager
-from typing import Optional
-from models.model import User
-from UserController import create_user_account
-from fastapi import FastAPI
+from Controllers.UserController import create_user_account
 
 import jwt
 from fastapi import FastAPI, Depends, HTTPException
 from pydantic import BaseModel
 from Controllers.BanckAccountController import create_bank_account
 from Controllers.BanckAccountController import get_bank_account
-from database import create_db_and_tables
 from Controllers.depositMoneyControlleur import depositMoney
-from models.model import BankAccount, Transactions
+from models.model import Transactions
 from Controllers.cancelTransactionController import cancel_transaction
 from database import engine
 from sqlmodel import Session
 from models.model import BankAccount
-from sqlmodel import SQLModel, Field, select
+from sqlmodel import select
 
 from database import create_db_and_tables, get_session
 from models.model import User
@@ -124,31 +120,3 @@ algorithm = "HS256"
 def generate_token(user: User):
      return jwt.encode(user.dict(), secret_key, algorithm=algorithm)
 
-
-""""class User(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    solde: int
-
-class Transactions(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    id_compteA: int
-    id_compteB: int
-
-""" ""
-
-""""compte = User(id=1, solde=100)
-compte2 = User(id=2, solde=100)
-
-
-
-
-def echange(compteA, compteB, var):
-    transaction = Transactions(id =1, id_compteA=compteA.id, id_compteB=compteB.id)
-    print(compteA.id, compteB.id)
-    compteB.solde = compteB.solde + var
-    compteA.solde= compteA.solde - var
-    return transaction
-
-print(echange(compte1, compte2, 50))
-print(compte1.solde)
-print(compte2.solde)""" ""
