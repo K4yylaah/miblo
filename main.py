@@ -13,6 +13,7 @@ from database import create_db_and_tables
 from Controllers.depositMoneyControlleur import depositMoney
 from models.model import BankAccount, Transactions
 from Controllers.cancelTransactionController import cancel_transaction
+from Controllers.Account_LoginController import login
 from database import engine
 from sqlmodel import Session
 from models.model import BankAccount
@@ -55,6 +56,10 @@ class CancelTransactionRequest(BaseModel):
     id_compteA: int
     id_compteB: int
     id_transaction: int
+
+class LoginBody(BaseModel):
+    email: str
+    password: str
 app = FastAPI(lifespan=lifespan)
 
 
@@ -106,23 +111,10 @@ def cancel_transaction_endpoint(request: CancelTransactionRequest):
 
 # app.include_router(users_router)
 
-class LoginBody (BaseModel):
-    email: str
-    password: str
-
 @app.post("/login")
-def login(body : LoginBody, session = Depends(get_session)):
-    user = session.exec(select(User).where(User.email==body.email)).first()
-    if not user or user.password != body.password:
-        raise HTTPException(status_code=401, detail="Email ou mot de passe incorrect")
-
-    return {"message": f"Bienvenue {user.email} !"}
-
-secret_key = "1234567890123456789"
-algorithm = "HS256"
-
-def generate_token(user: User):
-     return jwt.encode(user.dict(), secret_key, algorithm=algorithm)
+def login_root(request: LoginBody):
+    print(request)
+    return login(request.email, request.password)
 
 
 """"class User(SQLModel, table=True):
