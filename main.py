@@ -9,7 +9,8 @@ from Controllers.BanckAccountController import get_bank_account
 from database import create_db_and_tables
 from Controllers.depositMoneyControlleur import depositMoney
 from models.model import BankAccount, Transactions
-from Controllers.cancelTransactionController import cancel_transaction
+from Controllers.TransactionController import cancel_transaction
+from Controllers.TransactionController import show_transaction
 from database import engine
 from sqlmodel import Session
 from models.model import BankAccount
@@ -104,6 +105,10 @@ class CancelTransactionRequest(BaseModel):
 @app.post("/cancelTransaction")
 def cancel_transaction_endpoint(request: CancelTransactionRequest):
     return cancel_transaction(request.id_compteA, request.id_compteB, request.id_transaction)
+
+@app.post("/showTransaction")
+def show_details_transaction(request: CancelTransactionRequest):
+    return show_transaction(request.id_compteA, request.id_compteB, request.id_transaction)
 
 
 """"class User(SQLModel, table=True):
