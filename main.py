@@ -25,10 +25,27 @@ class DepositRequest(BaseModel):
     compteId: int
     amout: float
 
+
 class CreateUserBody(BaseModel):
     name: str
     email: str
     password: str
+
+class TransactionRequest(BaseModel):
+    id_compteA: int
+    id_compteB: int
+    amout: float
+
+
+class CreateAccountRequest(BaseModel):
+    user_id: int
+    solde: float
+    rib: str
+
+class CancelTransactionRequest(BaseModel):
+    id_compteA: int
+    id_compteB: int
+    id_transaction: int
 app = FastAPI(lifespan=lifespan)
 
 
@@ -36,44 +53,29 @@ app = FastAPI(lifespan=lifespan)
 def read_root():
     return {"test"}
 
-
 @app.post("/create/bank/account")
 def accountBank_root(request: BankAccount):
-    return create_bank_account(request.id, request.user_id, request.solde, request.rib, request.is_primary)
+    return create_bank_account(
+        request.id, request.user_id, request.solde, request.rib, request.is_primary
+    )
 
 @app.get("/bank/account/{user_id}")
 def bank_account_root(user_id: int):
     return get_bank_account(user_id)
 
-
-class DepositRequest(BaseModel):
-    compteId: int
-    amout: float
 @app.post("/depositMoney")
 def make_deposit(request: DepositRequest):
     return depositMoney(request.compteId, request.amout)
 
 @app.post("/register")
 def create_account(user: CreateUserBody):
-    return create_user_account (user.name, user.password, user.email)
-
-class TransactionRequest(BaseModel):
-    id_compteA: int
-    id_compteB: int
-    amout: float
-
-class CreateAccountRequest(BaseModel):
-    user_id: int
-    solde: float
-    rib: str
+    return create_user_account(user.name, user.password, user.email)
 
 @app.post("/createBankAccount")
 def create_bank_account(request: CreateAccountRequest):
     with Session(engine) as session:
         account = BankAccount(
-            user_id=request.user_id,
-            solde=request.solde,
-            rib=request.rib
+            user_id=request.user_id, solde=request.solde, rib=request.rib
         )
         session.add(account)
         session.commit()
@@ -86,24 +88,18 @@ def create_transaction(request: TransactionRequest):
         transaction = Transactions(
             id_compteA=request.id_compteA,
             id_compteB=request.id_compteB,
-            amout=request.amout
+            amout=request.amout,
         )
         session.add(transaction)
         session.commit()
         session.refresh(transaction)
-        return {
-            "message": "Transaction créée avec succès.",
-            "transaction": transaction
-        }
-
-class CancelTransactionRequest(BaseModel):
-    id_compteA: int
-    id_compteB: int
-    id_transaction: int
+        return {"message": "Transaction créée avec succès.", "transaction": transaction}
 
 @app.post("/cancelTransaction")
 def cancel_transaction_endpoint(request: CancelTransactionRequest):
-    return cancel_transaction(request.id_compteA, request.id_compteB, request.id_transaction)
+    return cancel_transaction(
+        request.id_compteA, request.id_compteB, request.id_transaction
+    )
 
 
 """"class User(SQLModel, table=True):
