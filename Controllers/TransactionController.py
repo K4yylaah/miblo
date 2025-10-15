@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlmodel import Session, select
 from models.model import Transactions, BankAccount, User
 from database import engine
@@ -57,3 +58,46 @@ def show_all_transactions(compte_id):
         if not transactions:
             return {"Aucune transaction trouvée pour ce compte."}
         return transactions
+
+def send_money(id_compteA: int, id_compteB: int, amout: float):
+    if amout <= 0:
+        raise HTTPException(status_code=400, detail="Le montant doit être positif")
+
+    if id_compteA == id_compteB:
+        raise HTTPException(status_code=400, detail="Le compte destinataire doit être différent du compte source")
+
+    with Session(engine) as session:
+        compteA = session.exec(select(BankAccount).where(BankAccount.id == id_compteA)).first()
+        compteB = session.exec(select(BankAccount).where(BankAccount.id == id_compteB)).first()
+
+        if not compteA:
+            raise HTTPException(status_code=404, detail="Compte source introuvable")
+        if not compteB:
+            raise HTTPException(status_code=404, detail="Compte destinataire introuvable")
+
+        if compteA.solde < amout:
+            raise HTTPException(status_code=400, detail="Solde insuffisant")
+
+        compteA.solde -= amout
+        compteB.solde += amout
+
+        transaction = Transactions(
+            id_compteA=id_compteA,
+            id_compteB=id_compteB,
+            amout=amout
+        )
+
+        session.add(transaction)
+        session.add(compteA)
+        session.add(compteB)
+        session.commit()
+        session.refresh(compteA)
+        session.refresh(compteB)
+        session.refresh(transaction)
+
+        return {
+            "message": f"Transfert de {amout}€ effectué avec succès",
+            "nouveau_solde_source": compteA.solde,
+            "nouveau_solde_destinataire": compteB.solde,
+            "transaction_id": transaction.id
+        }

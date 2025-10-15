@@ -14,7 +14,7 @@ from Controllers.depositMoneyControlleur import depositMoney
 from Controllers.TransactionController import cancel_transaction, show_transaction
 from Controllers.Account_Login_Controller import login, get_user
 from Controllers.User_Recovery_Controller import get_user_by_id
-from Controllers.TransactionController import cancel_transaction, show_transaction, show_all_transactions
+from Controllers.TransactionController import cancel_transaction, show_transaction, show_all_transactions, send_money
 from models.model import BankAccount, Transactions, User
 from sqlmodel import Session
 from database import create_db_and_tables, get_session, engine
@@ -51,6 +51,11 @@ class CancelTransactionRequest(BaseModel):
 class LoginBody(BaseModel):
     email: str
     password: str
+
+class SendMoneyRequest(BaseModel):
+    id_compteA: int
+    id_compteB: int
+    amout: float
 
 app = FastAPI(lifespan=lifespan)
 
@@ -115,3 +120,7 @@ def login_root(request: LoginBody):
 def get_user(user=Depends(get_user)):
     print(user)
     return get_user_by_id(user["id"])
+
+@app.post("/sendMoney")
+def send_money_endpoint(request: SendMoneyRequest):
+    return send_money(request.id_compteA, request.id_compteB, request.amout)
