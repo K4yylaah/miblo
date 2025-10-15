@@ -1,5 +1,5 @@
 from sqlmodel import Session, select
-from models.model import Transactions, BankAccount
+from models.model import Transactions, BankAccount, User
 from database import engine
 
 
@@ -31,4 +31,23 @@ def cancel_transaction(id_compteA, id_compteB, id_transaction):
             "message": f"Transaction {id_transaction} annulée avec succès.",
             "compteA_solde": bankaccountA.solde,
             "compteB_solde": bankaccountB.solde
+        }
+
+def show_transaction(id_compteA, id_compteB, id_transaction):
+    with Session(engine) as session:
+        compteA = session.exec(select(BankAccount).where(BankAccount.id == id_compteA)).first()
+        compteB = session.exec(select(BankAccount).where(BankAccount.id == id_compteB)).first()
+        transaction = session.exec(select(Transactions).where(Transactions.id == id_transaction)).first()
+        userCompteA = session.exec(select(User).where(User.id == compteA.user_id)).first()
+        userCompteB = session.exec(select(User).where(User.id == compteB.user_id)).first()
+
+
+        if not transaction:
+            return {"Cette transaction n'existe pas"}
+        return {
+            "Nom du compte envoyeur" : userCompteA.name,
+            "RIB du compte envoyeur" : compteA.rib,
+            "Nom du compte qui recoit" : userCompteB.name,
+            "RIB du compte qui recoit" : compteB.rib,
+            "Montant de la transaction" : transaction.amout,
         }

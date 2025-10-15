@@ -22,7 +22,7 @@ class BankAccount(SQLModel, table=True):
     user_id: int
     solde: float
     rib : str
-    is_primary: bool
+    is_primary: Optional[bool] = Field(default=False)
 
 class Deposits(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)

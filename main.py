@@ -7,8 +7,9 @@ from pydantic import BaseModel
 from Controllers.BanckAccountController import create_bank_account
 from Controllers.BanckAccountController import get_bank_account
 from Controllers.depositMoneyControlleur import depositMoney
+from Controllers.TransactionController import show_transaction
 from models.model import Transactions
-from Controllers.cancelTransactionController import cancel_transaction
+from Controllers.TransactionController import cancel_transaction
 from database import engine
 from sqlmodel import Session
 from models.model import BankAccount
@@ -58,6 +59,7 @@ app = FastAPI(lifespan=lifespan)
 def read_root():
     return {"test"}
 
+
 @app.post("/create/bank/account")
 def accountBank_root(request: BankAccount):
     return create_bank_account(
@@ -96,6 +98,10 @@ def cancel_transaction_endpoint(request: CancelTransactionRequest):
     return cancel_transaction(
         request.id_compteA, request.id_compteB, request.id_transaction
     )
+
+@app.post("/showTransaction")
+def show_details_transaction(request: CancelTransactionRequest):
+    return show_transaction(request.id_compteA, request.id_compteB, request.id_transaction)
 
 
 
