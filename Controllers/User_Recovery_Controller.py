@@ -15,6 +15,7 @@ def get_user_by_id(user_id):
         ).all()
         user_data = user.dict()
         user_data.pop("password", None)
+        user_data["count_account"] = len(bank_accounts)
         user_data["comptes"] = [
             {"id": account.id, "solde": account.solde} for account in bank_accounts
         ]
