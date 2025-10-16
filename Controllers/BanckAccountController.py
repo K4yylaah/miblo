@@ -8,17 +8,38 @@ from database import engine
 from models.model import BankAccount
 
 
-def create_bank_account(id, user_id, solde, rib, is_primary):
+def create_bank_account(user_id: int, session: Session = None):
+    solde = 0
+    rib = "123456"
 
-    with Session(engine) as session:
-        bank_account = BankAccount(
-            id=id, user_id=user_id, solde=solde, rib=rib, is_primary=is_primary
-        )
-        session.add(bank_account)
-        session.commit()
-        session.refresh(bank_account)
+    try:
+        if session is None:
+            with Session(engine) as new_session:
+                bank_account = BankAccount(
+                    user_id=user_id,
+                    solde=solde,
+                    rib=rib,
+                    is_primary=False
+                )
+                new_session.add(bank_account)
+                new_session.commit()
+                new_session.refresh(bank_account)
+                return bank_account
+        else:
+            bank_account = BankAccount(
+                user_id=user_id,
+                solde=solde,
+                rib=rib,
+                is_primary=True
+            )
+            session.add(bank_account)
+            session.flush()
+            session.refresh(bank_account)
+            return bank_account
 
-    return {"message": "OK"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lors de la création du compte : {str(e)}")
+
 
 
 def get_bank_account(user_id):
@@ -27,8 +48,6 @@ def get_bank_account(user_id):
             select(BankAccount).where(BankAccount.user_id == user_id)
         ).all()
         return test
-
-
 
 def close_account(bank_account_id: int):
     with Session(engine) as session:
