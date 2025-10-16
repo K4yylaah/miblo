@@ -6,13 +6,14 @@ from sqlmodel import select, Session
 from urllib3 import request
 from models.model import User
 from database import get_session, engine
+from Controllers.UserController import verify_password
 import jwt
 
 def login(email, password):
     with Session(engine) as session:
         user = session.exec(select(User).where(User.email==email)).first()
-        if not user or user.password != password:
-            raise HTTPException(status_code=401, detail="Email ou mot de passe incorrect")
+        if not user or not verify_password(password, user.password):
+            raise HTTPException(status_code=401, detail="Invalid credentials")
 
     return {"token": generate_token(user)}
 
