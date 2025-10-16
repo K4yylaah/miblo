@@ -44,9 +44,6 @@ class DepositRequest(BaseModel):
     amout: float
 
 
-class Bankaccount(BaseModel):
-    user_id: int
-
 class CreateUserBody(BaseModel):
     name: str
     email: str
@@ -82,11 +79,9 @@ app = FastAPI(lifespan=lifespan)
 def read_root():
     return {"test"}
 
-@app.post("/create/bank/account")
-def accountBank_root(request: Bankaccount):
-    return create_bank_account(
-        request.user_id
-    )
+@app.post("/create/bank/account/{user_id}")
+def accountBank_root(user_id: int):
+    return create_bank_account(user_id)
 
 @app.get("/bank/account/{user_id}")
 def bank_account_root(user_id: int):

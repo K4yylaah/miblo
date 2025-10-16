@@ -88,9 +88,16 @@ def send_money(id_compteA: int, id_compteB: int, amout: float):
     if id_compteA == id_compteB:
         raise HTTPException(status_code=400, detail="Le compte destinataire doit être différent du compte source")
 
+
+
     with Session(engine) as session:
         compteA = session.exec(select(BankAccount).where(BankAccount.id == id_compteA)).first()
         compteB = session.exec(select(BankAccount).where(BankAccount.id == id_compteB)).first()
+
+        if compteA.is_closed == True:
+            return {"message": "Le compte est fermer impossbile de faire le transfert"}
+        if compteB.is_closed == True:
+            return {"message": "Le compte est fermer impossbile de faire le transfert"}
 
         if not compteA:
             raise HTTPException(status_code=404, detail="Compte source introuvable")
