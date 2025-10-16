@@ -1,7 +1,9 @@
 from fastapi import HTTPException
-from sqlmodel import Session, select
-from models.model import Transactions, BankAccount, User
+from sqlmodel import Session, select, text
+from models.model import Transactions, BankAccount, User, datetime as datetime
 from database import engine
+from datetime import datetime, timedelta 
+
 
 def is_avoidableCheck(id_transaction, timer):
     with Session(engine) as session:
@@ -62,21 +64,19 @@ def show_transaction(id_transaction):
             "Montant de la transaction" : transaction.amout,
         }
         
-def show_all_transactions(compte_id: int, user_id: int):
+def get_all_transactions(compte_id, user_id): 
     with Session(engine) as session:
         # 1. Vérification de l'appartenance du compte à l'utilisateur
-        compte = session.exec(
-            select(BankAccount)
-            .where(BankAccount.id == compte_id)
-            .where(BankAccount.user_id == user_id) 
-        ).first()
-        
+        compte = session.exec(select(BankAccount).where((BankAccount.id == compte_id) & (BankAccount.user_id == user_id))).first()
         if not compte: 
-            
             raise HTTPException(status_code=404, detail="Compte introuvable")
         
         # 2. Récupération des transactions
-        transactions = session.exec(select(Transactions).where(Transactions.id_compteA == compte_id)).all()
+        transactions = session.exec(select(Transactions).where(Transactions.id_compteA == compte_id)).all() # Inclus les transactions où le compte est source
+        transactions += session.exec(select(Transactions).where(Transactions.id_compteB == compte_id)).all() # Inclus les transactions où le compte est destinataire
+        
+        transactions.sort(key=lambda x: x.id, reverse=True) # Tri par ordre décroissant plus récentes en premières
+        transactions = list({t.id: t for t in transactions}.values()) # Suppression des doublons si une transaction est à la fois source et destinataire
         
         if not transactions:
             # Préférer retourner une liste vide plutôt qu'une exception
@@ -90,9 +90,16 @@ def send_money(id_compteA: int, id_compteB: int, amout: float):
     if id_compteA == id_compteB:
         raise HTTPException(status_code=400, detail="Le compte destinataire doit être différent du compte source")
 
+
+
     with Session(engine) as session:
         compteA = session.exec(select(BankAccount).where(BankAccount.id == id_compteA)).first()
         compteB = session.exec(select(BankAccount).where(BankAccount.id == id_compteB)).first()
+
+        if compteA.is_closed == True:
+            return {"message": "Le compte est fermer impossbile de faire le transfert"}
+        if compteB.is_closed == True:
+            return {"message": "Le compte est fermer impossbile de faire le transfert"}
 
         if not compteA:
             raise HTTPException(status_code=404, detail="Compte source introuvable")

@@ -1,6 +1,8 @@
 # models.py
+import datetime
 from typing import Optional
 from sqlmodel import SQLModel, Field
+from datetime import datetime
 
 
 class User(SQLModel, table=True):
@@ -15,13 +17,14 @@ class Transactions(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     id_compteA: int
     id_compteB: int
-    amout: float
+    created_at: datetime = Field(default_factory=datetime.now)
+    amout: float    
     is_voidable: bool
 
 class BankAccount(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: int
-    solde: float
+    solde: int
     rib : str
     is_primary: Optional[bool] = Field(default=False)
     is_closed: Optional[bool] = Field(default=False)

@@ -18,14 +18,14 @@ from Controllers.depositMoneyControlleur import depositMoney, get_depositById, g
 from Controllers.TransactionController import cancel_transaction, show_transaction
 from Controllers.Account_Login_Controller import login, get_user
 from Controllers.User_Recovery_Controller import get_user_by_id
-from Controllers.TransactionController import cancel_transaction, show_transaction, show_all_transactions
+from Controllers.TransactionController import cancel_transaction, show_transaction, get_all_transactions
 from Controllers.recipientController import findRecipientRib, makeRecipient, showRecipients
 from Controllers.TransactionController import (
     cancel_transaction,
     show_transaction,
-    show_all_transactions,
+    get_all_transactions
 )
-from Controllers.TransactionController import cancel_transaction, show_transaction, show_all_transactions, send_money
+from Controllers.TransactionController import cancel_transaction, show_transaction, get_all_transactions, send_money
 from models.model import BankAccount, Transactions, User, Recipients
 from Controllers.Account_Login_Controller import login
 from sqlmodel import Session, select
@@ -42,6 +42,7 @@ async def lifespan(app: FastAPI):
 class DepositRequest(BaseModel):
     compteId: int
     amout: float
+
 
 class CreateUserBody(BaseModel):
     name: str
@@ -78,11 +79,9 @@ app = FastAPI(lifespan=lifespan)
 def read_root():
     return {"test"}
 
-@app.post("/create/bank/account")
-def accountBank_root(request: BankAccount):
-    return create_bank_account(
-        request.id, request.user_id, request.solde, request.rib, request.is_primary
-    )
+@app.post("/create/bank/account/{user_id}")
+def accountBank_root(user_id: int):
+    return create_bank_account(user_id)
 
 @app.get("/bank/account/{user_id}")
 def bank_account_root(user_id: int):
@@ -109,10 +108,9 @@ def show_details_transaction(id_transaction: int):
     return show_transaction(id_transaction)
 
 
-@app.get("/showAllTransactions/{compte_id}")
-def show_all_transactions_endpoint(compte_id: int):
-    return show_all_transactions(compte_id)
-
+@app.get("/Transactions/{compte_id}/{user_id}")
+def show_all_transactions(compte_id: int, user_id: int):
+    return get_all_transactions(compte_id, user_id) 
 
 # app.include_router(users_router)
 
