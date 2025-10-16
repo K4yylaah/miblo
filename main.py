@@ -104,11 +104,9 @@ def cancel_transaction_endpoint(request: CancelTransactionRequest):
         request.id_compteA, request.id_compteB, request.id_transaction
     )
 
-@app.post("/showTransaction")
-def show_details_transaction(request: CancelTransactionRequest):
-    return show_transaction(
-        request.id_compteA, request.id_compteB, request.id_transaction
-    )
+@app.get("/showTransaction/{id_transaction}")
+def show_details_transaction(id_transaction: int):
+    return show_transaction(id_transaction)
 
 
 @app.get("/showAllTransactions/{compte_id}")

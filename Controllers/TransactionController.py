@@ -44,14 +44,13 @@ def cancel_transaction(id_compteA, id_compteB, id_transaction):
                 "message" : "Cette transaction n'est plus annulable"
             }
 
-def show_transaction(id_compteA, id_compteB, id_transaction):
+def show_transaction(id_transaction):
     with Session(engine) as session:
-        compteA = session.exec(select(BankAccount).where(BankAccount.id == id_compteA)).first()
-        compteB = session.exec(select(BankAccount).where(BankAccount.id == id_compteB)).first()
         transaction = session.exec(select(Transactions).where(Transactions.id == id_transaction)).first()
-        userCompteA = session.exec(select(User).where(User.id == compteA.user_id)).first()
-        userCompteB = session.exec(select(User).where(User.id == compteB.user_id)).first()
-
+        compteA = session.exec(select(BankAccount).where(BankAccount.id == Transactions.id_compteA)).first()
+        compteB = session.exec(select(BankAccount).where(BankAccount.id == Transactions.id_compteB)).first()
+        userCompteA = session.exec(select(User).where(User.id == Transactions.id_compteA)).first()
+        userCompteB = session.exec(select(User).where(User.id == Transactions.id_compteB)).first()
 
         if not transaction:
             return {"Cette transaction n'existe pas"}
