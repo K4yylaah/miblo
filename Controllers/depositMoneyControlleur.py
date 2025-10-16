@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlmodel import Session, select
 from models.model import BankAccount, Deposits
 from database import engine
@@ -5,13 +6,13 @@ from database import engine
 
 def depositMoney(compteId, amout):
     if amout<=0:
-        return {"Erreur: Le depot dois etre strictement supérieur à 0"}
+        raise HTTPException(status_code=400, detail="Le dépôt doit être strictement supérieur à 0")
 
     with Session(engine) as session:
         compte = session.exec(select(BankAccount).where(BankAccount.id == compteId)).first()
 
         if not compte:
-            return {"Erreur: Compte introuvable."}
+            raise HTTPException(status_code=404, detail="Compte introuvable.")
 
         compte.solde += amout
         session.add(compte)

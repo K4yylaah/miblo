@@ -43,6 +43,10 @@ class DepositRequest(BaseModel):
     compteId: int
     amout: float
 
+
+class Bankaccount(BaseModel):
+    user_id: int
+
 class CreateUserBody(BaseModel):
     name: str
     email: str
@@ -79,9 +83,9 @@ def read_root():
     return {"test"}
 
 @app.post("/create/bank/account")
-def accountBank_root(request: BankAccount):
+def accountBank_root(request: Bankaccount):
     return create_bank_account(
-        request.id, request.user_id, request.solde, request.rib, request.is_primary
+        request.user_id
     )
 
 @app.get("/bank/account/{user_id}")

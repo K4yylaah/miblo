@@ -21,7 +21,7 @@ class Transactions(SQLModel, table=True):
 class BankAccount(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: int
-    solde: float
+    solde: int
     rib : str
     is_primary: Optional[bool] = Field(default=False)
     is_closed: Optional[bool] = Field(default=False)
