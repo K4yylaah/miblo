@@ -16,6 +16,7 @@ class Transactions(SQLModel, table=True):
     id_compteA: int
     id_compteB: int
     amout: float
+    is_voidable: bool
 
 class BankAccount(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
