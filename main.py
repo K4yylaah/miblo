@@ -19,16 +19,16 @@ from Controllers.TransactionController import cancel_transaction, show_transacti
 from Controllers.Account_Login_Controller import login, get_user
 from Controllers.User_Recovery_Controller import get_user_by_id
 from Controllers.TransactionController import cancel_transaction, show_transaction, show_all_transactions
-from Controllers.recipientController import findRecipientRib, makeRecipient
+from Controllers.recipientController import findRecipientRib, makeRecipient, showRecipients
 from Controllers.TransactionController import (
     cancel_transaction,
     show_transaction,
     show_all_transactions,
 )
 from Controllers.TransactionController import cancel_transaction, show_transaction, show_all_transactions, send_money
-from models.model import BankAccount, Transactions, User
+from models.model import BankAccount, Transactions, User, Recipients
 from Controllers.Account_Login_Controller import login
-from sqlmodel import Session
+from sqlmodel import Session, select
 from database import create_db_and_tables, get_session, engine
 
 # from routes.users import router as users_router, LoginData
@@ -153,6 +153,10 @@ def create_recipient(request: RecipientRequest):
         return {"error": "Aucun compte trouvé avec ce RIB"}
     return makeRecipient(request.user_id, recipient)
 
+@app.get("/showRecipients/{user_id}")
+def show_recipients(user_id: int):
+    return showRecipients(user_id)
+    
 @app.post("/sendMoney")
 def send_money_endpoint(request: SendMoneyRequest):
     return send_money(request.id_compteA, request.id_compteB, request.amout)

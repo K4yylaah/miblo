@@ -18,3 +18,8 @@ def makeRecipient(user_id, recipient):
             "user_id": user_id,
             "recipient_id": recipient.id
         }
+
+def showRecipients(user_id):
+    with Session(engine) as session:
+        recipients = session.exec(select(Recipients).where(Recipients.user_id == user_id)).all()
+    return recipients
