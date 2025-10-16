@@ -14,7 +14,7 @@ from Controllers.BanckAccountController import (
     get_bank_account,
     close_account,
 )
-from Controllers.depositMoneyControlleur import depositMoney
+from Controllers.depositMoneyControlleur import depositMoney, get_depositById, getAccountDeposits
 from Controllers.TransactionController import cancel_transaction, show_transaction
 from Controllers.Account_Login_Controller import login, get_user
 from Controllers.User_Recovery_Controller import get_user_by_id
@@ -160,3 +160,11 @@ def show_recipients(user_id: int):
 @app.post("/sendMoney")
 def send_money_endpoint(request: SendMoneyRequest):
     return send_money(request.id_compteA, request.id_compteB, request.amout)
+
+@app.get("/getDepositById/{deposit_id}")
+def get_deposits_by_id_endpoint(deposit_id: int):
+    return get_depositById(deposit_id)
+
+@app.get("/getAccountDeposits/{account_id}")
+def get_account_deposits_endpoint(account_id: int):
+    return getAccountDeposits(account_id)

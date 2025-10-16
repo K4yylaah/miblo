@@ -28,3 +28,17 @@ def depositMoney(compteId, amout):
             "nouveau_solde": compte.solde,
             "deposit": deposit
         }
+
+def get_depositById(id_deposit):
+    with Session(engine) as session:
+        deposit = session.exec(select(Deposits).where(Deposits.id == id_deposit)).first()
+        return deposit
+
+def getAccountDeposits(id_account):
+    with Session(engine) as session:
+        account = session.exec(select(BankAccount).where(BankAccount.id == id_account)).first()
+        deposits = session.exec(select(Deposits).where(Deposits.id_compte == account.id)).all()
+        depositsDict = {}
+        for deposit in deposits:
+            depositsDict[deposit.id] = deposit
+        return depositsDict
