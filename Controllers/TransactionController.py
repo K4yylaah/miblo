@@ -52,11 +52,25 @@ def show_transaction(id_compteA, id_compteB, id_transaction):
             "Montant de la transaction" : transaction.amout,
         }
         
-def show_all_transactions(compte_id):
+def show_all_transactions(compte_id: int, user_id: int):
     with Session(engine) as session:
-        transactions = session.exec(select(Transactions).where((Transactions == compte_id) | (Transactions == compte_id))).all()
+        # 1. Vérification de l'appartenance du compte à l'utilisateur
+        compte = session.exec(
+            select(BankAccount)
+            .where(BankAccount.id == compte_id)
+            .where(BankAccount.user_id == user_id) 
+        ).first()
+        
+        if not compte: 
+            
+            raise HTTPException(status_code=404, detail="Compte introuvable")
+        
+        # 2. Récupération des transactions
+        transactions = session.exec(select(Transactions).where(Transactions.id_compteA == compte_id)).all()
+        
         if not transactions:
-            return {"Aucune transaction trouvée pour ce compte."}
+            # Préférer retourner une liste vide plutôt qu'une exception
+            return [] 
         return transactions
 
 def send_money(id_compteA: int, id_compteB: int, amout: float):
