@@ -1,7 +1,9 @@
 from fastapi import HTTPException
-from sqlmodel import Session, select
-from models.model import Transactions, BankAccount, User
+from sqlmodel import Session, select, text
+from models.model import Transactions, BankAccount, User, datetime as datetime
 from database import engine
+from datetime import datetime, timedelta 
+
 
 def is_avoidableCheck(id_transaction, timer):
     with Session(engine) as session:
@@ -66,13 +68,13 @@ def get_all_transactions(compte_id, user_id):
     with Session(engine) as session:
         # 1. Vérification de l'appartenance du compte à l'utilisateur
         compte = session.exec(select(BankAccount).where((BankAccount.id == compte_id) & (BankAccount.user_id == user_id))).first()
-
         if not compte: 
             raise HTTPException(status_code=404, detail="Compte introuvable")
         
         # 2. Récupération des transactions
         transactions = session.exec(select(Transactions).where(Transactions.id_compteA == compte_id)).all() # Inclus les transactions où le compte est source
         transactions += session.exec(select(Transactions).where(Transactions.id_compteB == compte_id)).all() # Inclus les transactions où le compte est destinataire
+        
         transactions.sort(key=lambda x: x.id, reverse=True) # Tri par ordre décroissant plus récentes en premières
         transactions = list({t.id: t for t in transactions}.values()) # Suppression des doublons si une transaction est à la fois source et destinataire
         
