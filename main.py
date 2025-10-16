@@ -96,18 +96,7 @@ def make_deposit(request: DepositRequest):
 def create_account(user: CreateUserBody):
     return create_user_account(user.name, user.password, user.email)
 
-@app.post("/createTransaction")
-def create_transaction(request: TransactionRequest):
-    with Session(engine) as session:
-        transaction = Transactions(
-            id_compteA=request.id_compteA,
-            id_compteB=request.id_compteB,
-            amout=request.amout,
-        )
-        session.add(transaction)
-        session.commit()
-        session.refresh(transaction)
-        return {"message": "Transaction créée avec succès.", "transaction": transaction}
+
 
 @app.post("/cancelTransaction")
 def cancel_transaction_endpoint(request: CancelTransactionRequest):
@@ -157,6 +146,6 @@ def create_recipient(request: RecipientRequest):
 def show_recipients(user_id: int):
     return showRecipients(user_id)
     
-@app.post("/sendMoney")
+@app.post("/createTransaction")
 def send_money_endpoint(request: SendMoneyRequest):
     return send_money(request.id_compteA, request.id_compteB, request.amout)
