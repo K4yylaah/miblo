@@ -11,10 +11,12 @@ import jwt
 
 def login(email, password):
     with Session(engine) as session:
+        #recherche l'utilisateur correspondant à l'email
         user = session.exec(select(User).where(User.email==email)).first()
         if not user or not verify_password(password, user.password):
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
+    # genere un token d'authentification
     return {"token": generate_token(user)}
 
 secret_key = "very_secret_key"

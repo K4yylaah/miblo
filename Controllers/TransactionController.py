@@ -112,6 +112,7 @@ def send_money(id_compteA: int, id_compteB: int, amout: float):
         compteA.solde -= amout
         compteB.solde += amout
 
+        # Créer un enregistrement de la transaction
         transaction = Transactions(
             id_compteA=id_compteA,
             id_compteB=id_compteB,
@@ -119,10 +120,12 @@ def send_money(id_compteA: int, id_compteB: int, amout: float):
             is_voidable=True
         )
 
+        # Sauvegarde les changements
         session.add(transaction)
         session.add(compteA)
         session.add(compteB)
         session.commit()
+        #Refresh pour avoir les valeurs a jours
         session.refresh(compteA)
         session.refresh(compteB)
         session.refresh(transaction)

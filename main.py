@@ -31,8 +31,6 @@ from Controllers.Account_Login_Controller import login
 from sqlmodel import Session, select
 from database import create_db_and_tables, get_session, engine
 
-# from routes.users import router as users_router, LoginData
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -112,7 +110,6 @@ def show_details_transaction(id_transaction: int):
 def show_all_transactions(compte_id: int, user_id: int):
     return get_all_transactions(compte_id, user_id) 
 
-# app.include_router(users_router)
 
 @app.post("/login")
 def login_root(request: LoginBody):
@@ -128,9 +125,11 @@ def close_account_root(banckAccount_id: int):
 def get_user(user=Depends(get_user)):
     print(user)
     return get_user_by_id(user["id"])
+
 class RecipientRequest(BaseModel):
     user_id: int
     rib: str
+
 @app.post("/createRecipient/{user_id}")
 def create_recipient(request: RecipientRequest):
     recipient = findRecipientRib(request.rib)
