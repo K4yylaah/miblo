@@ -1,5 +1,7 @@
 #main.py
 
+from fastapi.middleware.cors import CORSMiddleware
+
 from contextlib import asynccontextmanager
 from Controllers.UserController import create_user_account
 
@@ -152,3 +154,12 @@ def get_deposits_by_id_endpoint(deposit_id: int):
 @app.get("/getAccountDeposits/{account_id}")
 def get_account_deposits_endpoint(account_id: int):
     return getAccountDeposits(account_id)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
