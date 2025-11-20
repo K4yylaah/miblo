@@ -141,15 +141,25 @@ def get_user(user=Depends(get_user)):
     return get_user_by_id(user["id"])
 
 class RecipientRequest(BaseModel):
-    user_id: int
     rib: str
+    recipient_name: str
+
+import traceback
 
 @app.post("/createRecipient/{user_id}")
-def create_recipient(request: RecipientRequest):
-    recipient = findRecipientRib(request.rib)
-    if not recipient:
-        return {"error": "Aucun compte trouvé avec ce RIB"}
-    return makeRecipient(request.user_id, recipient)
+def create_recipient(user_id: int, request: RecipientRequest):
+    try:
+        recipient = findRecipientRib(request.rib)
+        if not recipient:
+            return {"error": "Aucun compte trouvé avec ce RIB"}
+        return makeRecipient(user_id, recipient, request.recipient_name)
+    except Exception as e:
+        print("🔥 ERREUR BACKEND :", e)
+        print(traceback.format_exc())
+        raise e
+
+
+
 
 @app.get("/show/recipients/{user_id}")
 def show_recipients(user_id: int):
