@@ -151,7 +151,7 @@ def create_recipient(request: RecipientRequest):
         return {"error": "Aucun compte trouvé avec ce RIB"}
     return makeRecipient(request.user_id, recipient)
 
-@app.get("/showRecipients/{user_id}")
+@app.get("/show/recipients/{user_id}")
 def show_recipients(user_id: int):
     return showRecipients(user_id)
     
