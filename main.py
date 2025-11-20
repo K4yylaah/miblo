@@ -1,7 +1,7 @@
 #main.py
 
 from fastapi.middleware.cors import CORSMiddleware
-
+from fastapi import Body
 from contextlib import asynccontextmanager
 from Controllers.UserController import create_user_account
 
@@ -14,7 +14,7 @@ from pydantic import BaseModel
 from Controllers.BanckAccountController import (
     create_bank_account,
     get_bank_account,
-    close_account,
+    close_account, get_bank_account_by_rib,
 )
 from Controllers.depositMoneyControlleur import depositMoney, get_depositById, getAccountDeposits
 from Controllers.TransactionController import cancel_transaction, show_transaction
@@ -75,6 +75,14 @@ class SendMoneyRequest(BaseModel):
 
 app = FastAPI(lifespan=lifespan)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.get("/")
 def read_root():
     return {"test"}
@@ -86,6 +94,10 @@ def accountBank_root(user_id: int):
 @app.get("/bank/account/{user_id}")
 def bank_account_root(user_id: int):
     return get_bank_account(user_id)
+
+@app.get("/bank/account-by-rib/{rib}")
+def bank_account_get_by_rib(rib: str):
+    return get_bank_account_by_rib(rib)
 
 @app.post("/depositMoney")
 def make_deposit(request: DepositRequest):
@@ -144,7 +156,7 @@ def show_recipients(user_id: int):
     return showRecipients(user_id)
     
 @app.post("/createTransaction")
-def send_money_endpoint(request: SendMoneyRequest):
+def send_money_endpoint(request: SendMoneyRequest = Body(...)):
     return send_money(request.id_compteA, request.id_compteB, request.amout)
 
 @app.get("/getDepositById/{deposit_id}")
@@ -154,12 +166,3 @@ def get_deposits_by_id_endpoint(deposit_id: int):
 @app.get("/getAccountDeposits/{account_id}")
 def get_account_deposits_endpoint(account_id: int):
     return getAccountDeposits(account_id)
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)

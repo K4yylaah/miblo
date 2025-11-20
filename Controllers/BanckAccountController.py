@@ -49,6 +49,18 @@ def get_bank_account(user_id):
         ).all()
         return test
 
+def get_bank_account_by_rib(rib):
+    with Session(engine) as session:
+        account = session.exec(
+            select(BankAccount).where(BankAccount.rib == rib)
+        ).first()
+
+        if not account:
+            raise HTTPException(404, "Compte introuvable")
+
+        return account
+
+
 def close_account(bank_account_id: int):
     with Session(engine) as session:
 
