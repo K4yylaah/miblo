@@ -18,7 +18,7 @@ class Transactions(SQLModel, table=True):
     id_compteA: int
     id_compteB: int
     created_at: datetime = Field(default_factory=datetime.now)
-    amout: float    
+    amout: float
     is_voidable: bool
 
 class BankAccount(SQLModel, table=True):

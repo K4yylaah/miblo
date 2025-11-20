@@ -120,9 +120,9 @@ def show_details_transaction(id_transaction: int):
     return show_transaction(id_transaction)
 
 
-@app.get("/Transactions/{compte_id}/{user_id}")
-def show_all_transactions(compte_id: int, user_id: int):
-    return get_all_transactions(compte_id, user_id) 
+@app.get("/transactions/{account_id}/{user_id}")
+def show_all_transactions(account_id: int, user_id: int):
+    return get_all_transactions(account_id, user_id)
 
 
 @app.post("/login")
