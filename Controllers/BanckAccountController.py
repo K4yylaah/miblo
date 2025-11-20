@@ -6,11 +6,21 @@ from sqlalchemy.util import b
 from sqlmodel import Session, select, update
 from database import engine
 from models.model import BankAccount
+import random
+
+
+def rib_generator():
+    numberRib = ""
+    for _ in range(8):
+        numberRib += str(random.randint(0, 9))
+    rib = "FR-" + numberRib
+    return rib
+
 
 
 def create_bank_account(user_id: int, session: Session = None):
     solde = 0
-    rib = "123456"
+    rib = rib_generator()
 
     try:
         if session is None:
