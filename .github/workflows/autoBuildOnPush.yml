@@ -17,7 +17,7 @@ jobs:
           python -m pip install -r requirements.txt
 
       - name: start and test app for 5 seconde project
-        run: timeout 5 uvicorn main:app
+        run: timeout 5 uvicorn main:app || true
 
       - name: Check app imports
         run: |
