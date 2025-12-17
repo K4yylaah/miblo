@@ -5,3 +5,4 @@ sqlmodel
 uvicorn
 bcrypt
 jwt
+urllib3
