@@ -4,7 +4,7 @@ from models.model import BankAccount, Deposits
 from database import engine
 
 
-def depositMoney(compteId, amout):
+def depositMoney(compteId, amout, engine):
     if amout<=0:
         raise HTTPException(status_code=400, detail="Le dépôt doit être strictement supérieur à 0")
 
