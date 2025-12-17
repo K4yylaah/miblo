@@ -10,9 +10,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: pip install fastapi uvicorn
-      - run: pip install pytest
-      - run: pip install httpx
+      - run: pip install -r requirements
       - name: Build project
         run: uvicorn main:app --reload
 
