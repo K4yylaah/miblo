@@ -19,6 +19,13 @@ jobs:
       - name: start and test app for 5 seconde project
         run: timeout 5 uvicorn main:app
 
+      - name: Check app imports
+        run: |
+          python - <<EOF
+          from main import app
+          print("App OK")
+          EOF
+
       - name: Send email when fail
         #send email when the build fail 4
         if: failure()
