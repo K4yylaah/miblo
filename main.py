@@ -85,7 +85,7 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"test"}
+    return {"Hello": "World"}
 
 @app.post("/create/bank/account/{user_id}")
 def accountBank_root(user_id: int):
