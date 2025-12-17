@@ -1,20 +1,21 @@
 name: autoTestOnPush.yml
-on:
-  [push]
+on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v5
-        - uses: actions/setup-python@v5
-          with:
-            python-version: '3.14'
-
-        - names: install pytest
-        - run: |
-            python -m venv venv
-            source venv./bin/activate
-            python -m pip install -- pip update
-            python -m pip install pytest
-        - names: start test
-        - run : python -m pytest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - name: install and initialize pytet
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade pytest
+      - name: Run test
+        run: |
+          source venv/bin/activate
+          python -m pytest
