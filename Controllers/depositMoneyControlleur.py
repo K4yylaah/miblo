@@ -14,8 +14,8 @@ def deposit_money(compte_id, amout, engine):
         if not compte:
             raise HTTPException(status_code=404, detail="Compte introuvable.")
 
-        #compte.solde += amout
-        #session.add(compte)
+        compte.solde += amout
+        session.add(compte)
 
         deposit = Deposits(id_compte=compte_id, amout=amout)
         session.add(deposit)

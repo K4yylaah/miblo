@@ -24,7 +24,7 @@ jobs:
           EOF
 
       - name: Send email when fail
-        if: success()
+        if: failure()
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
