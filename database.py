@@ -4,6 +4,7 @@ from models.model import User
 
 sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./data/database.db"
 
 connect_args = {"check_same_thread": False}
 engine = create_engine(sqlite_url, connect_args=connect_args)
