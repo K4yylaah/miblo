@@ -17,12 +17,12 @@ RUN addgroup --system appgroup \
     && adduser --system --ingroup appgroup appuser
 
 # Code en lecture seule
-COPY --chown=appuser:appgroup --chmod=755 ./Controllers ./Controllers
-COPY --chown=appuser:appgroup --chmod=755 ./models ./models
-COPY --chown=appuser:appgroup --chmod=755 ./routes ./routes
-COPY --chown=appuser:appgroup --chmod=755 ./testUnitaire ./testUnitaire
-COPY --chown=appuser:appgroup --chmod=644 ./main.py .
-COPY --chown=appuser:appgroup --chmod=644 ./database.py .
+COPY --chown=root:root --chmod=755 ./Controllers ./Controllers
+COPY --chown=root:root --chmod=755 ./models ./models
+COPY --chown=root:root --chmod=755 ./routes ./routes
+COPY --chown=root:root --chmod=755 ./testUnitaire ./testUnitaire
+COPY --chown=root:root --chmod=644 ./main.py .
+COPY --chown=root:root --chmod=644 ./database.py .
 
 # Dossier writable pour SQLite
 RUN mkdir /app/data \
