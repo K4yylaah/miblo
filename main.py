@@ -85,7 +85,7 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"test"}
+    return {"Hello": "World"}
 
 @app.post("/create/bank/account/{user_id}")
 def accountBank_root(user_id: int):
@@ -101,7 +101,7 @@ def bank_account_get_by_rib(rib: str):
 
 @app.post("/depositMoney")
 def make_deposit(request: DepositRequest):
-    return depositMoney(request.compteId, request.amout)
+    return depositMoney(request.compteId, request.amout, engine)
 
 @app.post("/register")
 def create_account(user: CreateUserBody):
