@@ -3,36 +3,32 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Dossier de travail
 WORKDIR /app
 
-# Dépendances système
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-       ca-certificates \
+    && apt-get install -y --no-install-recommends ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Dépendances Python
 COPY requirements.txt .
 RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
-# Création d'un utilisateur non-root
 RUN addgroup --system appgroup \
     && adduser --system --ingroup appgroup appuser
 
-# Copie du code avec les bons droits
-COPY --chown=appuser:appgroup ./Controllers .
-COPY --chown=appuser:appgroup ./models .
-COPY --chown=appuser:appgroup ./main.py .
-COPY --chown=appuser:appgroup ./routes .
-COPY --chown=appuser:appgroup ./testUnitaire .
-COPY --chown=appuser:appgroup ./database.py .
+# Code en lecture seule
+COPY --chown=appuser:appgroup --chmod=755 ./Controllers ./Controllers
+COPY --chown=appuser:appgroup --chmod=755 ./models ./models
+COPY --chown=appuser:appgroup --chmod=755 ./routes ./routes
+COPY --chown=appuser:appgroup --chmod=755 ./testUnitaire ./testUnitaire
+COPY --chown=appuser:appgroup --chmod=644 ./main.py .
+COPY --chown=appuser:appgroup --chmod=644 ./database.py .
 
-# Droits d'accès
-RUN chmod -R 755 /app
+# Dossier writable pour SQLite
+RUN mkdir /app/data \
+    && chown appuser:appgroup /app/data \
+    && chmod 700 /app/data
 
-# On ne tourne plus en root
 USER appuser
 
 EXPOSE 8000
