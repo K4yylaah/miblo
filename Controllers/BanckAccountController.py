@@ -1,9 +1,5 @@
-import re
-
 from fastapi import HTTPException
-from fastapi.routing import request_response
-from sqlalchemy.util import b
-from sqlmodel import Session, select, update
+from sqlmodel import Session, select
 from database import engine
 from models.model import BankAccount
 import random

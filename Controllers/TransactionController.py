@@ -1,8 +1,7 @@
 from fastapi import HTTPException
-from sqlmodel import Session, select, text
-from models.model import Transactions, BankAccount, User, datetime as datetime
+from sqlmodel import Session, select
+from models.model import Transactions, BankAccount, User
 from database import engine
-from datetime import datetime, timedelta 
 
 
 def is_avoidableCheck(id_transaction, timer):

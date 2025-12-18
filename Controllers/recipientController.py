@@ -1,5 +1,5 @@
 from sqlmodel import Session, select
-from models.model import Transactions, BankAccount, User, Recipients
+from models.model import BankAccount, User, Recipients
 from database import engine
 from datetime import datetime
 
