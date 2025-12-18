@@ -4,12 +4,12 @@ from models.model import BankAccount, Deposits
 from database import engine
 
 
-def deposit_money(compteId, amout, engine):
+def deposit_money(compte_id, amout, engine):
     if amout<=0:
         raise HTTPException(status_code=400, detail="Le dépôt doit être strictement supérieur à 0")
 
     with Session(engine) as session:
-        compte = session.exec(select(BankAccount).where(BankAccount.id == compteId)).first()
+        compte = session.exec(select(BankAccount).where(BankAccount.id == compte_id)).first()
 
         if not compte:
             raise HTTPException(status_code=404, detail="Compte introuvable.")
@@ -17,7 +17,7 @@ def deposit_money(compteId, amout, engine):
         compte.solde += amout
         session.add(compte)
 
-        deposit = Deposits(id_compte=compteId, amout=amout)
+        deposit = Deposits(id_compte=compte_id, amout=amout)
         session.add(deposit)
 
         session.commit()

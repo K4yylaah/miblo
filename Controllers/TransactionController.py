@@ -14,31 +14,31 @@ def cancel_transaction(id_compteA, id_compteB, id_transaction):
     #Je recupere le montant de la transaction
     with Session(engine) as session:
         transaction = session.exec(select(Transactions).where(Transactions.id == id_transaction)).first()
-        bankaccountA = session.exec(select(BankAccount).where(BankAccount.id == id_compteA)).first()
-        bankaccountB = session.exec(select(BankAccount).where(BankAccount.id == id_compteB)).first()
+        bankaccount_a = session.exec(select(BankAccount).where(BankAccount.id == id_compteA)).first()
+        bankaccount_b = session.exec(select(BankAccount).where(BankAccount.id == id_compteB)).first()
 
         if not transaction:
             return {"Cette transaction n'existe pas"}
 
         if transaction.is_voidable==True:
         #Je rajoute le montant au solde du compteA
-            bankaccountA.solde+=transaction.amout
+            bankaccount_a.solde+=transaction.amout
         #Je soustret le montant au solde du compteB
-            bankaccountB.solde-=transaction.amout
+            bankaccount_b.solde-=transaction.amout
         #Je supprime la transaction
             session.delete(transaction)
 
         #Je sauvegarde les modifications dans la base
-            session.add(bankaccountA)
-            session.add(bankaccountB)
+            session.add(bankaccount_a)
+            session.add(bankaccount_b)
             session.commit()
-            session.refresh(bankaccountA)
-            session.refresh(bankaccountB)
+            session.refresh(bankaccount_a)
+            session.refresh(bankaccount_b)
 
             return {
                 "message": f"Transaction {id_transaction} annulée avec succès.",
-                "compteA_solde": bankaccountA.solde,
-                "compteB_solde": bankaccountB.solde
+                "compteA_solde": bankaccount_a.solde,
+                "compteB_solde": bankaccount_b.solde
             }
         else:
             return {
@@ -48,18 +48,18 @@ def cancel_transaction(id_compteA, id_compteB, id_transaction):
 def show_transaction(id_transaction):
     with Session(engine) as session:
         transaction = session.exec(select(Transactions).where(Transactions.id == id_transaction)).first()
-        compteA = session.exec(select(BankAccount).where(BankAccount.id == Transactions.id_compteA)).first()
-        compteB = session.exec(select(BankAccount).where(BankAccount.id == Transactions.id_compteB)).first()
-        userCompteA = session.exec(select(User).where(User.id == Transactions.id_compteA)).first()
-        userCompteB = session.exec(select(User).where(User.id == Transactions.id_compteB)).first()
+        compte_a = session.exec(select(BankAccount).where(BankAccount.id == Transactions.id_compteA)).first()
+        compte_b = session.exec(select(BankAccount).where(BankAccount.id == Transactions.id_compteB)).first()
+        user_compte_b = session.exec(select(User).where(User.id == Transactions.id_compteA)).first()
+        user_compte_b = session.exec(select(User).where(User.id == Transactions.id_compteB)).first()
 
         if not transaction:
             return {"Cette transaction n'existe pas"}
         return {
-            "Nom du compte envoyeur" : userCompteA.name,
-            "RIB du compte envoyeur" : compteA.rib,
-            "Nom du compte qui recoit" : userCompteB.name,
-            "RIB du compte qui recoit" : compteB.rib,
+            "Nom du compte envoyeur" : user_compte_b.name,
+            "RIB du compte envoyeur" : compte_a.rib,
+            "Nom du compte qui recoit" : user_compte_b.name,
+            "RIB du compte qui recoit" : compte_b.rib,
             "Montant de la transaction" : transaction.amout,
         }
         
@@ -82,56 +82,56 @@ def get_all_transactions(compte_id, user_id):
             return [] 
         return transactions
 
-def send_money(id_compteA: int, id_compteB: int, amout: float):
+def send_money(id_compte_a: int, id_compte_b: int, amout: float):
     if amout <= 0:
         raise HTTPException(status_code=400, detail="Le montant doit être positif")
 
-    if id_compteA == id_compteB:
+    if id_compte_a == id_compte_b:
         raise HTTPException(status_code=400, detail="Le compte destinataire doit être différent du compte source")
 
 
 
     with Session(engine) as session:
-        compteA = session.exec(select(BankAccount).where(BankAccount.id == id_compteA)).first()
-        compteB = session.exec(select(BankAccount).where(BankAccount.id == id_compteB)).first()
+        compte_a = session.exec(select(BankAccount).where(BankAccount.id == id_compte_a)).first()
+        compte_b = session.exec(select(BankAccount).where(BankAccount.id == id_compte_b)).first()
 
-        if compteA.is_closed == True:
+        if compte_a.is_closed == True:
             return {"message": "Le compte est fermer impossbile de faire le transfert"}
-        if compteB.is_closed == True:
+        if compte_b.is_closed == True:
             return {"message": "Le compte est fermer impossbile de faire le transfert"}
 
-        if not compteA:
+        if not compte_a:
             raise HTTPException(status_code=404, detail="Compte source introuvable")
-        if not compteB:
+        if not compte_b:
             raise HTTPException(status_code=404, detail="Compte destinataire introuvable")
 
-        if compteA.solde < amout:
+        if compte_a.solde < amout:
             raise HTTPException(status_code=400, detail="Solde insuffisant")
 
-        compteA.solde -= amout
-        compteB.solde += amout
+        compte_a.solde -= amout
+        compte_b.solde += amout
 
         # Créer un enregistrement de la transaction
         transaction = Transactions(
-            id_compteA=id_compteA,
-            id_compteB=id_compteB,
+            id_compteA=id_compte_a,
+            id_compteB=id_compte_b,
             amout=amout,
             is_voidable=True
         )
 
         # Sauvegarde les changements
         session.add(transaction)
-        session.add(compteA)
-        session.add(compteB)
+        session.add(compte_a)
+        session.add(compte_b)
         session.commit()
         #Refresh pour avoir les valeurs a jours
-        session.refresh(compteA)
-        session.refresh(compteB)
+        session.refresh(compte_a)
+        session.refresh(compte_b)
         session.refresh(transaction)
 
         return {
             "message": f"Transfert de {amout}€ effectué avec succès",
-            "nouveau_solde_source": compteA.solde,
-            "nouveau_solde_destinataire": compteB.solde,
+            "nouveau_solde_source": compte_a.solde,
+            "nouveau_solde_destinataire": compte_b.solde,
             "transaction_id": transaction.id
         }

@@ -6,10 +6,10 @@ import random
 
 
 def rib_generator():
-    numberRib = ""
+    number_rib = ""
     for _ in range(8):
-        numberRib += str(random.randint(0, 9))
-    rib = "FR-" + numberRib
+        number_rib += str(random.randint(0, 9))
+    rib = "FR-" + number_rib
     return rib
 
 
