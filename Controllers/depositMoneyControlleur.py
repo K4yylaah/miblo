@@ -4,7 +4,7 @@ from models.model import BankAccount, Deposits
 from database import engine
 
 
-def depositMoney(compteId, amout, engine):
+def deposit_money(compteId, amout, engine):
     if amout<=0:
         raise HTTPException(status_code=400, detail="Le dépôt doit être strictement supérieur à 0")
 
@@ -30,12 +30,12 @@ def depositMoney(compteId, amout, engine):
             "deposit": deposit
         }
 
-def get_depositById(id_deposit):
+def get_deposit_by_id(id_deposit):
     with Session(engine) as session:
         deposit = session.exec(select(Deposits).where(Deposits.id == id_deposit)).first()
         return deposit
 
-def getAccountDeposits(id_account):
+def get_account_deposits(id_account):
     with Session(engine) as session:
         account = session.exec(select(BankAccount).where(BankAccount.id == id_account)).first()
         deposits = session.exec(select(Deposits).where(Deposits.id_compte == account.id)).all()

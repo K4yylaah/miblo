@@ -9,10 +9,10 @@ from Controllers.BanckAccountController import (
     get_bank_account,
     close_account, get_bank_account_by_rib,
 )
-from Controllers.depositMoneyControlleur import depositMoney, get_depositById, getAccountDeposits
+from Controllers.depositMoneyControlleur import deposit_money, get_deposit_by_id, get_account_deposits
 from Controllers.Account_Login_Controller import get_user
 from Controllers.User_Recovery_Controller import get_user_by_id
-from Controllers.recipientController import findRecipientRib, makeRecipient, showRecipients
+from Controllers.recipientController import find_recipient_rib, make_recipient, show_recipients
 from Controllers.TransactionController import cancel_transaction, show_transaction, get_all_transactions, send_money
 from Controllers.Account_Login_Controller import login
 from database import create_db_and_tables, engine
@@ -85,7 +85,7 @@ def bank_account_get_by_rib(rib: str):
 
 @app.post("/depositMoney")
 def make_deposit(request: DepositRequest):
-    return depositMoney(request.compteId, request.amout, engine)
+    return deposit_money(request.compteId, request.amout, engine)
 
 @app.post("/register")
 def create_account(user: CreateUserBody):
@@ -133,10 +133,10 @@ import traceback
 @app.post("/createRecipient/{user_id}")
 def create_recipient(user_id: int, request: RecipientRequest):
     try:
-        recipient = findRecipientRib(request.rib)
+        recipient = find_recipient_rib(request.rib)
         if not recipient:
             return {"error": "Aucun compte trouvé avec ce RIB"}
-        return makeRecipient(user_id, recipient, request.recipient_name)
+        return make_recipient(user_id, recipient, request.recipient_name)
     except Exception as e:
         print("🔥 ERREUR BACKEND :", e)
         print(traceback.format_exc())
@@ -147,7 +147,7 @@ def create_recipient(user_id: int, request: RecipientRequest):
 
 @app.get("/show/recipients/{user_id}")
 def show_recipients(user_id: int):
-    return showRecipients(user_id)
+    return show_recipients(user_id)
     
 @app.post("/createTransaction")
 def send_money_endpoint(request: SendMoneyRequest = Body(...)):
@@ -155,8 +155,8 @@ def send_money_endpoint(request: SendMoneyRequest = Body(...)):
 
 @app.get("/getDepositById/{deposit_id}")
 def get_deposits_by_id_endpoint(deposit_id: int):
-    return get_depositById(deposit_id)
+    return get_deposit_by_id(deposit_id)
 
 @app.get("/getAccountDeposits/{account_id}")
 def get_account_deposits_endpoint(account_id: int):
-    return getAccountDeposits(account_id)
+    return get_account_deposits(account_id)

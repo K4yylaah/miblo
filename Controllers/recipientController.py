@@ -3,12 +3,12 @@ from models.model import BankAccount, User, Recipients
 from database import engine
 from datetime import datetime
 
-def findRecipientRib(rib):
+def find_recipient_rib(rib):
     with (Session(engine)) as session:
         recipient = session.exec(select(BankAccount).where(BankAccount.rib == rib)).first()
         return recipient
 
-def makeRecipient(user_id, recipient, recipient_name):
+def make_recipient(user_id, recipient, recipient_name):
     with Session(engine) as session:
         user = session.exec(select(User).where(User.id == user_id)).first()
         if not user:
@@ -33,7 +33,7 @@ def makeRecipient(user_id, recipient, recipient_name):
         }
 
 
-def showRecipients(user_id):
+def show_recipients(user_id):
     with Session(engine) as session:
         results = session.exec(
             select(Recipients.id, Recipients.name, Recipients.date,BankAccount.rib).join(BankAccount, Recipients.id_recipient == BankAccount.id).where(Recipients.user_id == user_id)).all()
