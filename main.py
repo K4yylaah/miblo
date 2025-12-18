@@ -116,8 +116,8 @@ def login_root(request: LoginBody):
 
 
 @app.post("/bank/account/close/{banckAccount_id}")
-def close_account_root(banckAccount_id: int):
-    return close_account(banckAccount_id)
+def close_account_root(banck_account_id: int):
+    return close_account(banck_account_id)
 
 @app.get("/me")
 def get_user(user=Depends(get_user)):

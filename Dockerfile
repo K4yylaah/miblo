@@ -11,13 +11,10 @@ RUN apt-get update \
 
 COPY requirements.txt .
 RUN pip install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
-
-# Utilisateur non-root
-RUN addgroup --system appgroup \
+    && pip install --no-cache-dir -r requirements.txt \
+    && addgroup --system appgroup \
     && adduser --system --ingroup appgroup appuser
 
-# Code en lecture seule
 COPY --chown=root:root ./Controllers /app/Controllers
 COPY --chown=root:root ./models /app/models
 COPY --chown=root:root ./routes /app/routes
@@ -25,7 +22,6 @@ COPY --chown=root:root ./testUnitaire /app/testUnitaire
 COPY --chown=root:root ./main.py /app/main.py
 COPY --chown=root:root ./database.py /app/database.py
 
-# Permissions lecture seule pour le code
 RUN chmod -R 555 /app \
     && mkdir -p /app/data \
     && chown -R appuser:appgroup /app/data \

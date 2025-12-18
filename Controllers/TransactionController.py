@@ -50,13 +50,13 @@ def show_transaction(id_transaction):
         transaction = session.exec(select(Transactions).where(Transactions.id == id_transaction)).first()
         compte_a = session.exec(select(BankAccount).where(BankAccount.id == Transactions.id_compteA)).first()
         compte_b = session.exec(select(BankAccount).where(BankAccount.id == Transactions.id_compteB)).first()
-        user_compte_b = session.exec(select(User).where(User.id == Transactions.id_compteA)).first()
+        user_compte_a = session.exec(select(User).where(User.id == Transactions.id_compteA)).first()
         user_compte_b = session.exec(select(User).where(User.id == Transactions.id_compteB)).first()
 
         if not transaction:
             return {"Cette transaction n'existe pas"}
         return {
-            "Nom du compte envoyeur" : user_compte_b.name,
+            "Nom du compte envoyeur" : user_compte_a.name,
             "RIB du compte envoyeur" : compte_a.rib,
             "Nom du compte qui recoit" : user_compte_b.name,
             "RIB du compte qui recoit" : compte_b.rib,

@@ -19,10 +19,10 @@ def make_recipient(user_id, recipient, recipient_name):
         if existing:
             return {"message": f"Le destinataire {recipient.id} est déjà ajouté pour l’utilisateur {user.name}"}
 
-        recipientCreate = Recipients(user_id=user.id, id_recipient=recipient.id, name=recipient_name, date=datetime.now())
-        session.add(recipientCreate)
+        recipient_create = Recipients(user_id=user.id, id_recipient=recipient.id, name=recipient_name, date=datetime.now())
+        session.add(recipient_create)
         session.commit()
-        session.refresh(recipientCreate)
+        session.refresh(recipient_create)
 
         return {
             "message": "Le destinataire a bien été ajouté",

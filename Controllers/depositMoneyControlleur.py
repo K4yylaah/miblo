@@ -39,7 +39,7 @@ def get_account_deposits(id_account):
     with Session(engine) as session:
         account = session.exec(select(BankAccount).where(BankAccount.id == id_account)).first()
         deposits = session.exec(select(Deposits).where(Deposits.id_compte == account.id)).all()
-        depositsDict = {}
+        deposits_dict = {}
         for deposit in deposits:
-            depositsDict[deposit.id] = deposit
-        return depositsDict
+            deposits_dict[deposit.id] = deposit
+        return deposits_dict
