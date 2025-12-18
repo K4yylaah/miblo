@@ -1,4 +1,19 @@
+
+
 from fastapi.middleware.cors import CORSMiddleware
+"""
+FastAPI backend application for Miblo Bank system.
+This module provides RESTful API endpoints for managing user accounts, bank accounts,
+deposits, transactions, and recipients. It includes authentication, CORS middleware,
+and database initialization.
+Key Features:
+- User registration and authentication
+- Bank account creation and management
+- Money deposits and withdrawals
+- Transaction handling and cancellation
+- Recipient management
+- Transaction history tracking
+"""
 from fastapi import Body
 from contextlib import asynccontextmanager
 from Controllers.UserController import create_user_account
@@ -160,3 +175,4 @@ def get_deposits_by_id_endpoint(deposit_id: int):
 @app.get("/getAccountDeposits/{account_id}")
 def get_account_deposits_endpoint(account_id: int):
     return getAccountDeposits(account_id)
+
