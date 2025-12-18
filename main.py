@@ -1,7 +1,5 @@
 #main.py
 
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi import Body
 from contextlib import asynccontextmanager
 from Controllers.UserController import create_user_account
 
@@ -14,7 +12,7 @@ from pydantic import BaseModel
 from Controllers.BanckAccountController import (
     create_bank_account,
     get_bank_account,
-    close_account, get_bank_account_by_rib,
+    close_account,
 )
 from Controllers.depositMoneyControlleur import depositMoney, get_depositById, getAccountDeposits
 from Controllers.TransactionController import cancel_transaction, show_transaction
@@ -75,14 +73,6 @@ class SendMoneyRequest(BaseModel):
 
 app = FastAPI(lifespan=lifespan)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 @app.get("/")
 def read_root():
     return {"test"}
@@ -94,10 +84,6 @@ def accountBank_root(user_id: int):
 @app.get("/bank/account/{user_id}")
 def bank_account_root(user_id: int):
     return get_bank_account(user_id)
-
-@app.get("/bank/account-by-rib/{rib}")
-def bank_account_get_by_rib(rib: str):
-    return get_bank_account_by_rib(rib)
 
 @app.post("/depositMoney")
 def make_deposit(request: DepositRequest):
@@ -120,9 +106,9 @@ def show_details_transaction(id_transaction: int):
     return show_transaction(id_transaction)
 
 
-@app.get("/transactions/{account_id}/{user_id}")
-def show_all_transactions(account_id: int, user_id: int):
-    return get_all_transactions(account_id, user_id)
+@app.get("/Transactions/{compte_id}/{user_id}")
+def show_all_transactions(compte_id: int, user_id: int):
+    return get_all_transactions(compte_id, user_id)
 
 
 @app.post("/login")
@@ -141,32 +127,22 @@ def get_user(user=Depends(get_user)):
     return get_user_by_id(user["id"])
 
 class RecipientRequest(BaseModel):
+    user_id: int
     rib: str
-    recipient_name: str
-
-import traceback
 
 @app.post("/createRecipient/{user_id}")
-def create_recipient(user_id: int, request: RecipientRequest):
-    try:
-        recipient = findRecipientRib(request.rib)
-        if not recipient:
-            return {"error": "Aucun compte trouvé avec ce RIB"}
-        return makeRecipient(user_id, recipient, request.recipient_name)
-    except Exception as e:
-        print("🔥 ERREUR BACKEND :", e)
-        print(traceback.format_exc())
-        raise e
+def create_recipient(request: RecipientRequest):
+    recipient = findRecipientRib(request.rib)
+    if not recipient:
+        return {"error": "Aucun compte trouvé avec ce RIB"}
+    return makeRecipient(request.user_id, recipient)
 
-
-
-
-@app.get("/show/recipients/{user_id}")
+@app.get("/showRecipients/{user_id}")
 def show_recipients(user_id: int):
     return showRecipients(user_id)
-    
+
 @app.post("/createTransaction")
-def send_money_endpoint(request: SendMoneyRequest = Body(...)):
+def send_money_endpoint(request: SendMoneyRequest):
     return send_money(request.id_compteA, request.id_compteB, request.amout)
 
 @app.get("/getDepositById/{deposit_id}")
