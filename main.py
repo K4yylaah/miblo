@@ -17,12 +17,7 @@ Key Features:
 from fastapi import Body
 from contextlib import asynccontextmanager
 from Controllers.UserController import create_user_account
-
-import jwt
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-
-from Controllers.UserController import create_user_account
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 from Controllers.BanckAccountController import (
     create_bank_account,
@@ -30,21 +25,12 @@ from Controllers.BanckAccountController import (
     close_account, get_bank_account_by_rib,
 )
 from Controllers.depositMoneyControlleur import depositMoney, get_depositById, getAccountDeposits
-from Controllers.TransactionController import cancel_transaction, show_transaction
-from Controllers.Account_Login_Controller import login, get_user
+from Controllers.Account_Login_Controller import get_user
 from Controllers.User_Recovery_Controller import get_user_by_id
-from Controllers.TransactionController import cancel_transaction, show_transaction, get_all_transactions
 from Controllers.recipientController import findRecipientRib, makeRecipient, showRecipients
-from Controllers.TransactionController import (
-    cancel_transaction,
-    show_transaction,
-    get_all_transactions
-)
 from Controllers.TransactionController import cancel_transaction, show_transaction, get_all_transactions, send_money
-from models.model import BankAccount, Transactions, User, Recipients
 from Controllers.Account_Login_Controller import login
-from sqlmodel import Session, select
-from database import create_db_and_tables, get_session, engine
+from database import create_db_and_tables, engine
 
 
 @asynccontextmanager
@@ -98,7 +84,7 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"test"}
+    return {"Hello": "World"}
 
 @app.post("/create/bank/account/{user_id}")
 def accountBank_root(user_id: int):
@@ -114,7 +100,7 @@ def bank_account_get_by_rib(rib: str):
 
 @app.post("/depositMoney")
 def make_deposit(request: DepositRequest):
-    return depositMoney(request.compteId, request.amout)
+    return depositMoney(request.compteId, request.amout, engine)
 
 @app.post("/register")
 def create_account(user: CreateUserBody):

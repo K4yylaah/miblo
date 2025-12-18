@@ -1,0 +1,45 @@
+name: auto-build-on-push
+run-name: ${{ github.actor }} push a commit
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.12"
+
+      - name: install requirements
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: start and test app for 5 seconde project
+        run: timeout 5 uvicorn main:app || true
+
+      - name: Check app imports
+        run: |
+          python - <<EOF
+          from main import app
+          print("App OK")
+          EOF
+
+      - name: Send email when fail
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: erreur sur le repo ${{ github.repository }}
+          body: |
+            auteur du push : ${{ github.actor }}
+            sur la branche : ${{ github.ref }}
+            erreur sur le commit : ${{ github.sha }}
+          to: ${{ secrets.MAIL_TO }}
+          from: ${{ secrets.SMTP_USERNAME }}

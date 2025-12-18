@@ -1,0 +1,37 @@
+name: autoTestOnPush.yml
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Set up python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+        with:
+          python-version: "3.14"
+      - name: install and initialize pytet
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade -r requirements.txt
+      - name: Run test
+        run: |
+          source venv/bin/activate
+          python -m pytest
+
+      - name: Send email when fail
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: erreur sur le repo ${{ github.repository }}
+          body: |
+            auteur du push : ${{ github.actor }}
+            sur la branche : ${{ github.ref }}
+            erreur sur le commit : ${{ github.sha }}
+          to: ${{ secrets.MAIL_TO }}
+          from: ${{ secrets.SMTP_USERNAME }}

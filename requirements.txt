@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+pyjwt
+PyMySQL
+bcrypt
+httpx
+pytest
+sqlmodel
+uvicorn
+bcrypt
+jwt
+urllib3

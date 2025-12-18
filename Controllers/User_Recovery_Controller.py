@@ -1,6 +1,6 @@
 #Controllers/User_Recovery_Controller.py
 
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from sqlmodel import Session, select
 from models.model import User, BankAccount
 from database import engine

@@ -3,9 +3,8 @@
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlmodel import select, Session
-from urllib3 import request
 from models.model import User
-from database import get_session, engine
+from database import engine
 from Controllers.UserController import verify_password
 import jwt
 

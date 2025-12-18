@@ -1,10 +1,9 @@
 import bcrypt
-from sqlmodel import Session, create_engine, SQLModel
+from sqlmodel import Session
 
 from Controllers.BanckAccountController import create_bank_account
-from Controllers.depositMoneyControlleur import depositMoney
 from database import engine
-from models.model import BankAccount, User
+from models.model import User
 
 def hash_password(password: str) -> str:
     salt = bcrypt.gensalt()
