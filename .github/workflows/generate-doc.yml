@@ -1,32 +1,38 @@
-name: miblo-back-end Documentation Generation
-run-name: ${{ github.actor }} is generating documentation 
+name: Build Documentation
 
-on: [push]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  generate-doc:
+  build-docs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: 3.11
 
-      - name: Install Sphinx dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install -r requirements.txt
           pip install sphinx sphinx-autodoc-typehints
 
-      - name: Generate Sphinx documentation
+      - name: Build documentation
         run: |
-          sphinx-build -b html doc/source doc/build/html
+          cd doc
+          make html
 
-      - name: Upload documentation artifact
-        uses: actions/upload-artifact@v4
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+
         with:
-          name: miblo-backend-doc
-          path: doc/build/html
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./doc/build/html
