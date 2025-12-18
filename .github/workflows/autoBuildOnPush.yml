@@ -1,26 +1,21 @@
 name: auto-build-on-push
-run-name: ${{ github.actor }} push a commit
 on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Set up Python
-        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
         with:
           python-version: "3.12"
-
       - name: install requirements
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
-
       - name: start and test app for 5 seconde project
         run: timeout 5 uvicorn main:app || true
-
       - name: Check app imports
         run: |
           python - <<EOF
@@ -29,7 +24,7 @@ jobs:
           EOF
 
       - name: Send email when fail
-        if: failure()
+        if: success()
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
