@@ -4,7 +4,7 @@ from models.model import Transactions, BankAccount, User
 from database import engine
 
 
-def is_avoidableCheck(id_transaction, timer):
+def isAvoidableCheck(id_transaction, timer):
     with Session(engine) as session:
         transaction = session.exec(select(Transactions).where(Transactions.id == id_transaction)).first()
         if timer > 5:
