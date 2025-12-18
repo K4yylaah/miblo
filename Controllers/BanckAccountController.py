@@ -19,6 +19,18 @@ def rib_generator():
 
 
 def create_bank_account(user_id: int, session: Session = None):
+    """_summary_
+
+    Args:
+        user_id (int): _description_
+        session (Session, optional): _description_. Defaults to None.
+
+    Raises:
+        HTTPException: _description_
+
+    Returns:
+        _type_: _description_
+    """
     solde = 0
     rib = rib_generator()
 
@@ -60,6 +72,7 @@ def get_bank_account(user_id):
         return test
 
 def get_bank_account_by_rib(rib):
+    
     with Session(engine) as session:
         account = session.exec(
             select(BankAccount).where(BankAccount.rib == rib)

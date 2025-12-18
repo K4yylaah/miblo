@@ -23,7 +23,7 @@ secret_key = "very_secret_key"
 algorithm = "HS256"
 
 def generate_token(user: User):
-     return jwt.encode(user.dict(), secret_key, algorithm=algorithm)
+    return jwt.encode(user.dict(), secret_key, algorithm=algorithm)
 
 bearer_scheme = HTTPBearer()
 

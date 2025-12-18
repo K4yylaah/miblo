@@ -12,6 +12,16 @@ def is_avoidableCheck(id_transaction, timer):
             transaction.is_voidable = False
 
 def cancel_transaction(id_compteA, id_compteB, id_transaction):
+    """_summary_
+
+    Args:
+        id_compteA (_int_): _description_
+        id_compteB (_int_): _description_
+        id_transaction (_int_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     #Je recupere le montant de la transaction
     with Session(engine) as session:
         transaction = session.exec(select(Transactions).where(Transactions.id == id_transaction)).first()
@@ -47,6 +57,14 @@ def cancel_transaction(id_compteA, id_compteB, id_transaction):
             }
 
 def show_transaction(id_transaction):
+    """_summary_
+
+    Args:
+        id_transaction (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     with Session(engine) as session:
         transaction = session.exec(select(Transactions).where(Transactions.id == id_transaction)).first()
         compteA = session.exec(select(BankAccount).where(BankAccount.id == Transactions.id_compteA)).first()
@@ -65,6 +83,18 @@ def show_transaction(id_transaction):
         }
         
 def get_all_transactions(compte_id, user_id): 
+    """_summary_
+
+    Args:
+        compte_id (_type_): _description_
+        user_id (_type_): _description_
+
+    Raises:
+        HTTPException: _description_
+
+    Returns:
+        _type_: _description_
+    """
     with Session(engine) as session:
         # 1. Vérification de l'appartenance du compte à l'utilisateur
         compte = session.exec(select(BankAccount).where((BankAccount.id == compte_id) & (BankAccount.user_id == user_id))).first()
@@ -84,6 +114,23 @@ def get_all_transactions(compte_id, user_id):
         return transactions
 
 def send_money(id_compteA: int, id_compteB: int, amout: float):
+    """_summary_
+
+    Args:
+        id_compteA (int): _description_
+        id_compteB (int): _description_
+        amout (float): _description_
+
+    Raises:
+        HTTPException: _description_
+        HTTPException: _description_
+        HTTPException: _description_
+        HTTPException: _description_
+        HTTPException: _description_
+
+    Returns:
+        _type_: _description_
+    """
     if amout <= 0:
         raise HTTPException(status_code=400, detail="Le montant doit être positif")
 
