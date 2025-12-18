@@ -11,7 +11,13 @@ COPY requirements.txt .
 
 RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY --chown=root:root --chmod=755 src ./Controllers
+COPY --chown=root:root --chmod=755 src ./models
+COPY --chown=root:root --chmod=755 src ./routes
+COPY --chown=root:root --chmod=755 src ./testUnitaire
+COPY --chown=root:root --chmod=755 src ./database.py
+COPY --chown=root:root --chmod=755 src ./main.py
+
 
 EXPOSE 8000
 
