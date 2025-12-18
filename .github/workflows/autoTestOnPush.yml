@@ -27,6 +27,7 @@ jobs:
         with:
           server_address: smtp.gmail.com
           server_port: 587
+          connection_security: starttls
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
           subject: erreur sur le repo ${{ github.repository }}
