@@ -24,7 +24,7 @@ async def lifespan(app: FastAPI):
     yield
 
 class DepositRequest(BaseModel):
-    compteId: int
+    compte_id: int
     amout: float
 
 
@@ -34,8 +34,8 @@ class CreateUserBody(BaseModel):
     password: str
 
 class TransactionRequest(BaseModel):
-    id_compteA: int
-    id_compteB: int
+    id_compte_a: int
+    id_compte_b: int
     amout: float
 
 class CreateAccountRequest(BaseModel):
@@ -44,8 +44,8 @@ class CreateAccountRequest(BaseModel):
     rib: str
 
 class CancelTransactionRequest(BaseModel):
-    id_compteA: int
-    id_compteB: int
+    id_compte_a: int
+    id_compte_b: int
     id_transaction: int
 
 class LoginBody(BaseModel):
@@ -53,8 +53,8 @@ class LoginBody(BaseModel):
     password: str
 
 class SendMoneyRequest(BaseModel):
-    id_compteA: int
-    id_compteB: int
+    id_compte_a: int
+    id_compte_b: int
     amout: float
 
 app = FastAPI(lifespan=lifespan)
@@ -72,7 +72,7 @@ def read_root():
     return {"Hello": "World"}
 
 @app.post("/create/bank/account/{user_id}")
-def accountBank_root(user_id: int):
+def account_bank_root(user_id: int):
     return create_bank_account(user_id)
 
 @app.get("/bank/account/{user_id}")
@@ -85,7 +85,7 @@ def bank_account_get_by_rib(rib: str):
 
 @app.post("/depositMoney")
 def make_deposit(request: DepositRequest):
-    return deposit_money(request.compteId, request.amout, engine)
+    return deposit_money(request.compte_id, request.amout, engine)
 
 @app.post("/register")
 def create_account(user: CreateUserBody):
@@ -96,7 +96,7 @@ def create_account(user: CreateUserBody):
 @app.post("/cancelTransaction")
 def cancel_transaction_endpoint(request: CancelTransactionRequest):
     return cancel_transaction(
-        request.id_compteA, request.id_compteB, request.id_transaction
+        request.id_compte_a, request.id_compte_b, request.id_transaction
     )
 
 @app.get("/showTransaction/{id_transaction}")
@@ -151,7 +151,7 @@ def show_recipients(user_id: int):
     
 @app.post("/createTransaction")
 def send_money_endpoint(request: SendMoneyRequest = Body(...)):
-    return send_money(request.id_compteA, request.id_compteB, request.amout)
+    return send_money(request.id_compte_a, request.id_compte_b, request.amout)
 
 @app.get("/getDepositById/{deposit_id}")
 def get_deposits_by_id_endpoint(deposit_id: int):
