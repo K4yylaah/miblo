@@ -1,3 +1,4 @@
+#test
 name: autoTestOnPush.yml
 on: [push]
 jobs:
