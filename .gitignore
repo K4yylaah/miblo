@@ -19,6 +19,14 @@ venv/
 ENV/
 Pipfile.lock
 
+# Sphinx documentation build 
+/doc/build/
+/doc/_build/
+*.doctree
+*.log
+*.tmp
+*.bak
+
 # Jupyter notebooks checkpoints
 .ipynb_checkpoints/
 
