@@ -3,21 +3,37 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+# Dossier de travail
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \ build-essential \&& rm -rf /var/lib/apt/lists/*
+# Dépendances système
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
+# Dépendances Python
 COPY requirements.txt .
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
-RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+# Création d'un utilisateur non-root
+RUN addgroup --system appgroup \
+    && adduser --system --ingroup appgroup appuser
 
-COPY --chown=root:root --chmod=755 src ./Controllers
-COPY --chown=root:root --chmod=755 src ./models
-COPY --chown=root:root --chmod=755 src ./routes
-COPY --chown=root:root --chmod=755 src ./testUnitaire
-COPY --chown=root:root --chmod=755 src ./database.py
-COPY --chown=root:root --chmod=755 src ./main.py
+# Copie du code avec les bons droits
+COPY --chown=appuser:appgroup ./Controllers .
+COPY --chown=appuser:appgroup ./models .
+COPY --chown=appuser:appgroup ./main.py .
+COPY --chown=appuser:appgroup ./routes .
+COPY --chown=appuser:appgroup ./testUnitaire .
+COPY --chown=appuser:appgroup ./database.py .
 
+# Droits d'accès
+RUN chmod -R 755 /app
+
+# On ne tourne plus en root
+USER appuser
 
 EXPOSE 8000
 
