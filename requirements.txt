@@ -5,7 +5,8 @@ PyMySQL
 bcrypt
 httpx
 pytest
-sqlmodel
+sqlmodel==0.0.16
+SQLAlchemy==2.0.19
 uvicorn
 jwt
 urllib3
