@@ -2,9 +2,9 @@ name: Build Documentation
 
 on:
   push:
-    branches: [main]
+    branches: [feature/US4]
   pull_request:
-    branches: [main]
+    branches: [feature/US4]
 
 jobs:
   build-docs:
