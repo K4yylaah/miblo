@@ -7,6 +7,8 @@ httpx
 pytest
 sqlmodel
 uvicorn
-bcrypt
 jwt
 urllib3
+jinja2
+sphinx
+sphinx-autodoc-typehints
