@@ -10,7 +10,6 @@ extensions = [
 ]
 
 autodoc_mock_imports = [
-    "sqlmodel",
     "sqlalchemy",
     "fastapi",
     "database"

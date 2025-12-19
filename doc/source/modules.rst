@@ -12,11 +12,6 @@ Main Application
 Controllers
 -----------
 
-.. automodule:: Controllers.UserController
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 .. automodule:: Controllers.BanckAccountController
    :members:
    :undoc-members:
