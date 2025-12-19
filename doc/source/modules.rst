@@ -8,7 +8,7 @@ Main Application
    :members:
    :undoc-members:
    :show-inheritance:
-
+# ajout de la documentation des modules de controllers et models
 Controllers
 -----------
 
@@ -42,7 +42,8 @@ Controllers
    :undoc-members:
    :show-inheritance:
 
-SQLAlchemy Models
+SQLAlchemy Models 
+# documentation des models.py
 -----------------
 
 .. automodule:: models.model
